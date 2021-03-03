@@ -1,5 +1,6 @@
 package de.hsw.busplaner.beans;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import javax.persistence.Column;
@@ -21,12 +22,12 @@ import lombok.NoArgsConstructor;
 @Table(name = "T_HALTESTELLE")
 public class Haltestelle {
 
-    @Column(name = "ID")
+    @Column(name = "id")
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
     private Long id;
 
-    @Column(name = "BEZEICHNUNG")
+    @Column(name = "bezeichnung")
     private String bezeichnung;
 
     @OneToMany(mappedBy = "haltestelleid")
@@ -35,5 +36,6 @@ public class Haltestelle {
 
     public Haltestelle(String bezeichnung) {
         this.bezeichnung = bezeichnung;
+        this.haltestellenzuordnungen = new ArrayList<>();
     }
 }
