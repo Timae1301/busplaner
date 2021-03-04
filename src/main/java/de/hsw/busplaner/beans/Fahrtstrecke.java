@@ -32,10 +32,10 @@ public class Fahrtstrecke {
     @Column(name = "NAME")
     private String name;
 
-    @JoinColumn(name = "busnr")
+    @JoinColumn(name = "buslinieId")
     @ManyToOne
     @JsonBackReference(value = "BuslinieFahrtstrecke")
-    private Buslinie busnr;
+    private Buslinie buslinieId;
 
     @OneToMany(mappedBy = "fahrtstreckeid")
     @JsonManagedReference(value = "FahrtstreckeFahrplanzuordnung")

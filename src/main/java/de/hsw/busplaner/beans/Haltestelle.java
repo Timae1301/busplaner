@@ -1,6 +1,5 @@
 package de.hsw.busplaner.beans;
 
-import java.util.ArrayList;
 import java.util.List;
 
 import javax.persistence.Column;
@@ -13,6 +12,7 @@ import javax.persistence.Table;
 
 import com.fasterxml.jackson.annotation.JsonManagedReference;
 
+import de.hsw.busplaner.dtos.haltestelle.HaltestelleOutputDTO;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
@@ -22,20 +22,24 @@ import lombok.NoArgsConstructor;
 @Table(name = "T_HALTESTELLE")
 public class Haltestelle {
 
-    @Column(name = "id")
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
+    @Column(name = "ID")
     private Long id;
 
-    @Column(name = "bezeichnung")
-    private String bezeichnung;
+    @Column(name = "NAME")
+    private String name;
 
     @OneToMany(mappedBy = "haltestelleid")
     @JsonManagedReference(value = "HaltestelleHaltestellenzuordnung")
     List<Haltestellenzuordnung> haltestellenzuordnungen;
 
-    public Haltestelle(String bezeichnung) {
-        this.bezeichnung = bezeichnung;
-        this.haltestellenzuordnungen = new ArrayList<>();
+    public Haltestelle(String name) {
+        this.name = name;
+    }
+
+    public Haltestelle(HaltestelleOutputDTO haltestelleOutputDTO) {
+        this.id = haltestelleOutputDTO.getId();
+        this.name = haltestelleOutputDTO.getName();
     }
 }
