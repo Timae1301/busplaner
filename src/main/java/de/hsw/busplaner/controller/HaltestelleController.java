@@ -50,7 +50,7 @@ public class HaltestelleController {
     }
 
     @PostMapping(path = "/{haltestelleName}")
-    public ResponseEntity<Boolean> postHaltestelle(@PathVariable String haltestelleName) {
+    public ResponseEntity<Long> postHaltestelle(@PathVariable String haltestelleName) {
         return ResponseEntity.ok(service.postHaltestelle(haltestelleName));
     }
 

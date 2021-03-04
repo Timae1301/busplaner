@@ -4,7 +4,6 @@ import de.hsw.busplaner.beans.Buslinie;
 import de.hsw.busplaner.beans.Fahrtstrecke;
 import de.hsw.busplaner.dtos.buslinie.BuslinieOutputDTO;
 import de.hsw.busplaner.repositories.BuslinieRepository;
-import de.hsw.busplaner.repositories.FahrtstreckeRepository;
 import lombok.extern.java.Log;
 
 import java.util.ArrayList;
@@ -42,10 +41,9 @@ public class BuslinieService extends BasicService<Buslinie, Long> {
         return buslinien;
     }
 
-    public boolean postBuslinie(Long busNr) {
-        save(new Buslinie(busNr));
+    public Long postBuslinie(Long busNr) {
         log.info(String.format("Neue Buslinie: %s angelegt", busNr));
-        return true;
+        return save(new Buslinie(busNr)).getId();
     }
 
     public BuslinieOutputDTO getBuslinie(Long buslinieId) {

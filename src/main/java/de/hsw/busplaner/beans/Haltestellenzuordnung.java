@@ -11,6 +11,7 @@ import javax.persistence.Table;
 
 import com.fasterxml.jackson.annotation.JsonBackReference;
 
+import de.hsw.busplaner.dtos.haltestellenzuordnung.HaltestellenzuordnungInputDTO;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
@@ -40,4 +41,12 @@ public class Haltestellenzuordnung {
     @ManyToOne
     @JsonBackReference(value = "FahrtstreckeHaltestellenzuordnung")
     private Fahrtstrecke fahrtstreckeid;
+
+    public Haltestellenzuordnung(HaltestellenzuordnungInputDTO haltestellenzuordnungInputDTO, Fahrtstrecke fahrtstrecke,
+            Haltestelle haltestelle) {
+        this.fahrtzeit = haltestellenzuordnungInputDTO.getFahrtzeit();
+        this.fahrtstreckeid = fahrtstrecke;
+        this.haltestelleid = haltestelle;
+        this.naechsteHaltestelle = haltestellenzuordnungInputDTO.getNaechsteHaltestelle();
+    }
 }

@@ -15,6 +15,7 @@ import javax.persistence.Table;
 import com.fasterxml.jackson.annotation.JsonBackReference;
 import com.fasterxml.jackson.annotation.JsonManagedReference;
 
+import de.hsw.busplaner.dtos.fahrtstrecke.FahrtstreckeInputDTO;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
@@ -45,4 +46,8 @@ public class Fahrtstrecke {
     @JsonManagedReference(value = "FahrtstreckeHaltestellenzuordnung")
     List<Haltestellenzuordnung> haltestellenzuordnungen;
 
+    public Fahrtstrecke(FahrtstreckeInputDTO fahrtstreckeInputDTO, Buslinie buslinie) {
+        this.name = fahrtstreckeInputDTO.getName();
+        this.buslinieId = buslinie;
+    }
 }

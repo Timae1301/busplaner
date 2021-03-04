@@ -33,4 +33,7 @@ public class Fahrplan {
     @JsonManagedReference(value = "FahrplanFahrplanzuordnung")
     List<Fahrplanzuordnung> fahrplanzuordnungen;
 
+    public Fahrplan(String name) {
+        this.name = name;
+    }
 }

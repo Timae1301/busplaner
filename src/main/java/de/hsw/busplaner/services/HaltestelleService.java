@@ -32,11 +32,10 @@ public class HaltestelleService extends BasicService<Haltestelle, Long> {
         return haltestellen;
     }
 
-    public boolean postHaltestelle(String haltestelleName) {
+    public Long postHaltestelle(String haltestelleName) {
         Haltestelle haltestelle = new Haltestelle(haltestelleName);
-        repository.save(haltestelle);
         log.info(String.format("Neue Haltestelle: %s angelegt", haltestelleName));
-        return true;
+        return save(haltestelle).getId();
     }
 
     public HaltestelleOutputDTO getHaltestelle(Long haltestelleId) {

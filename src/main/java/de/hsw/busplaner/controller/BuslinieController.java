@@ -49,7 +49,7 @@ public class BuslinieController {
     }
 
     @PostMapping(path = "/{busNr}")
-    public ResponseEntity<Boolean> postBuslinie(@PathVariable Long busNr) {
+    public ResponseEntity<Long> postBuslinie(@PathVariable Long busNr) {
         return ResponseEntity.ok(service.postBuslinie(busNr));
     }
 
