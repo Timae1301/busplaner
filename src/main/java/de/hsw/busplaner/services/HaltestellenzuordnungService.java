@@ -33,36 +33,49 @@ public class HaltestellenzuordnungService extends BasicService<Haltestellenzuord
     }
 
     public Long postHaltestellenzuordnug(HaltestellenzuordnungInputDTO haltestellenzuordnungInputDTO) {
-        Optional<Fahrtstrecke> fahrtstreckeOpt = fahrtstreckeService
-                .findById(haltestellenzuordnungInputDTO.getFahrtstreckeId());
-        if (fahrtstreckeOpt.isEmpty()) {
-            throw new IllegalArgumentException(String.format("Keine Fahrtstrecke zu ID %s gefunden",
-                    haltestellenzuordnungInputDTO.getFahrtstreckeId()));
-        }
-        Optional<Haltestelle> haltestelleOpt = haltestelleService
-                .findById(haltestellenzuordnungInputDTO.getHaltestelleId());
-        if (haltestelleOpt.isEmpty()) {
-            throw new IllegalArgumentException(String.format("Keine Haltestelle zu ID %s gefunden",
-                    haltestellenzuordnungInputDTO.getHaltestelleId()));
-        }
+        Fahrtstrecke fahrtstrecke = getFahrtstreckeZuId(haltestellenzuordnungInputDTO.getFahrtstreckeId());
+        Haltestelle haltestelle = getHaltestelleZuId(haltestellenzuordnungInputDTO.getHaltestelleId());
+        getHaltestelleZuId(haltestellenzuordnungInputDTO.getNaechsteHaltestelle());
+
         Haltestellenzuordnung haltestellenzuordnung = new Haltestellenzuordnung(haltestellenzuordnungInputDTO,
-                fahrtstreckeOpt.get(), haltestelleOpt.get());
+                fahrtstrecke, haltestelle);
         save(haltestellenzuordnung);
         return haltestellenzuordnung.getId();
+    }
+
+    private Fahrtstrecke getFahrtstreckeZuId(Long id) {
+        Optional<Fahrtstrecke> fahrtstreckeOpt = fahrtstreckeService.findById(id);
+        if (fahrtstreckeOpt.isEmpty()) {
+            throw new IllegalArgumentException(String.format("Keine Fahrtstrecke zu ID %s gefunden", id));
+        }
+        return fahrtstreckeOpt.get();
+    }
+
+    private Haltestelle getHaltestelleZuId(Long id) {
+        Optional<Haltestelle> haltestelleOpt = haltestelleService.findById(id);
+        if (haltestelleOpt.isEmpty()) {
+            throw new IllegalArgumentException(String.format("Keine Haltestelle zu ID %s gefunden", id));
+        }
+        return haltestelleOpt.get();
     }
 
     public ArrayList<HaltestellenzuordnungOutputDTO> getAlleZuordnungen() {
         ArrayList<HaltestellenzuordnungOutputDTO> zuordnungen = new ArrayList<>();
         for (Haltestellenzuordnung zuordnung : findAll()) {
             log.info(String.format("Zuordnung: %s gefunden", zuordnung.getId()));
+            Haltestelle neachsteHaltestelle = getHaltestelleZuId(zuordnung.getNaechsteHaltestelle());
 
-            Optional<Haltestelle> neachsteHaltestelleOpt = haltestelleService
-                    .findById(zuordnung.getNaechsteHaltestelle());
-            if (neachsteHaltestelleOpt.isEmpty()) {
-                throw new IllegalArgumentException(
-                        String.format("Keine Haltestelle zu ID %s gefunden", zuordnung.getNaechsteHaltestelle()));
-            }
-            zuordnungen.add(new HaltestellenzuordnungOutputDTO(zuordnung, neachsteHaltestelleOpt.get()));
+            zuordnungen.add(new HaltestellenzuordnungOutputDTO(zuordnung, neachsteHaltestelle));
+        }
+        return zuordnungen;
+    }
+
+    public ArrayList<HaltestellenzuordnungOutputDTO> getAlleZuordnungenZuFahrtstrecke(Long fahrtstreckeId) {
+        Fahrtstrecke fahrtstrecke = getFahrtstreckeZuId(fahrtstreckeId);
+        ArrayList<HaltestellenzuordnungOutputDTO> zuordnungen = new ArrayList<>();
+        for (Haltestellenzuordnung zuordnung : repository.findAllByFahrtstreckeid(fahrtstrecke)) {
+            Haltestelle neachsteHaltestelle = getHaltestelleZuId(zuordnung.getNaechsteHaltestelle());
+            zuordnungen.add(new HaltestellenzuordnungOutputDTO(zuordnung, neachsteHaltestelle));
         }
         return zuordnungen;
     }
