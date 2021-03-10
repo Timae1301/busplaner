@@ -11,9 +11,7 @@ import de.hsw.busplaner.beans.Fahrtstrecke;
 import de.hsw.busplaner.dtos.fahrtstrecke.FahrtstreckeInputDTO;
 import de.hsw.busplaner.dtos.fahrtstrecke.FahrtstreckeOutputDTO;
 import de.hsw.busplaner.repositories.FahrtstreckeRepository;
-import lombok.extern.java.Log;
 
-@Log
 @Service
 public class FahrtstreckeService extends BasicService<Fahrtstrecke, Long> {
 
@@ -49,6 +47,14 @@ public class FahrtstreckeService extends BasicService<Fahrtstrecke, Long> {
             fahrtstrecken.add(new FahrtstreckeOutputDTO(fahrtstrecke));
         }
         return fahrtstrecken;
+    }
+
+    public Fahrtstrecke getFahrtstreckeZuId(Long id) {
+        Optional<Fahrtstrecke> fahrtstreckeOpt = findById(id);
+        if (fahrtstreckeOpt.isEmpty()) {
+            throw new IllegalArgumentException(String.format("Keine Fahrtstrecke zu ID %s gefunden", id));
+        }
+        return fahrtstreckeOpt.get();
     }
 
 }

@@ -1,6 +1,7 @@
 package de.hsw.busplaner.controller;
 
 import java.util.ArrayList;
+import java.util.Comparator;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.github.fge.jsonpatch.JsonPatch;
@@ -43,8 +44,15 @@ public class BuslinieController {
         ArrayList<BuslinieOutputDTO> buslinien = service.getAllBuslinien();
         if (buslinien.isEmpty()) {
             log.warning("Es sind keine Buslinien vorhanden");
-            return ResponseEntity.notFound().build();
         }
+        buslinien.sort(new Comparator<BuslinieOutputDTO>() {
+
+            @Override
+            public int compare(BuslinieOutputDTO o1, BuslinieOutputDTO o2) {
+                return Long.compare(o1.getBusnr(), o2.getBusnr());
+            }
+
+        });
         return ResponseEntity.ok(buslinien);
     }
 

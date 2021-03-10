@@ -1,6 +1,7 @@
 package de.hsw.busplaner.services;
 
 import java.util.ArrayList;
+import java.util.Optional;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -35,6 +36,14 @@ public class FahrplanService extends BasicService<Fahrplan, Long> {
             fahrplaene.add(new FahrplanOutputDTO(fahrplan));
         }
         return fahrplaene;
+    }
+
+    public Fahrplan getFahrplanZuId(Long id) {
+        Optional<Fahrplan> fahrplanOpt = findById(id);
+        if (fahrplanOpt.isEmpty()) {
+            throw new IllegalArgumentException(String.format("Keine Fahrplan zu ID %s gefunden", id));
+        }
+        return fahrplanOpt.get();
     }
 
 }

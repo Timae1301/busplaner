@@ -64,4 +64,12 @@ public class HaltestelleService extends BasicService<Haltestelle, Long> {
         }
         return false;
     }
+
+    public Haltestelle getHaltestelleZuId(Long id) {
+        Optional<Haltestelle> haltestelleOpt = findById(id);
+        if (haltestelleOpt.isEmpty()) {
+            throw new IllegalArgumentException(String.format("Keine Haltestelle zu ID %s gefunden", id));
+        }
+        return haltestelleOpt.get();
+    }
 }

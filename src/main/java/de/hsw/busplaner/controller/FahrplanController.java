@@ -32,7 +32,6 @@ public class FahrplanController {
         ArrayList<FahrplanOutputDTO> fahrplaene = service.getAlleFahrplaene();
         if (fahrplaene.isEmpty()) {
             log.warning("Es sind keine Fahrplaene vorhanden");
-            return ResponseEntity.notFound().build();
         }
         return ResponseEntity.ok(fahrplaene);
     }

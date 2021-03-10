@@ -15,7 +15,9 @@ import org.springframework.web.bind.annotation.RestController;
 import de.hsw.busplaner.dtos.haltestellenzuordnung.HaltestellenzuordnungInputDTO;
 import de.hsw.busplaner.dtos.haltestellenzuordnung.HaltestellenzuordnungOutputDTO;
 import de.hsw.busplaner.services.HaltestellenzuordnungService;
+import lombok.extern.java.Log;
 
+@Log
 @RestController
 @RequestMapping(path = "/api/haltestellenzuordnung")
 public class HaltestellenzuordnungController {
@@ -45,7 +47,7 @@ public class HaltestellenzuordnungController {
         ArrayList<HaltestellenzuordnungOutputDTO> zuordnungen = new ArrayList<>();
         zuordnungen = service.getAlleZuordnungen();
         if (zuordnungen.isEmpty()) {
-            return ResponseEntity.notFound().build();
+            log.warning("Es sind keine Haltestellenzuordnungen vorhanden");
         }
         return ResponseEntity.ok(zuordnungen);
     }

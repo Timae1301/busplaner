@@ -11,6 +11,7 @@ import javax.persistence.Table;
 
 import com.fasterxml.jackson.annotation.JsonBackReference;
 
+import de.hsw.busplaner.dtos.fahrplanzuordnung.FahrplanzuordnungInputDTO;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
@@ -40,4 +41,12 @@ public class Fahrplanzuordnung {
     @ManyToOne
     @JsonBackReference(value = "FahrplanFahrplanzuordnung")
     private Fahrplan fahrplanid;
+
+    public Fahrplanzuordnung(FahrplanzuordnungInputDTO fahrplanzuordnungInputDTO, Fahrtstrecke fahrtstrecke,
+            Fahrplan fahrplan) {
+        this.richtung = fahrplanzuordnungInputDTO.isRichtung();
+        this.startzeitpunkt = fahrplanzuordnungInputDTO.getStartzeitpunkt();
+        this.fahrtstreckeid = fahrtstrecke;
+        this.fahrplanid = fahrplan;
+    }
 }

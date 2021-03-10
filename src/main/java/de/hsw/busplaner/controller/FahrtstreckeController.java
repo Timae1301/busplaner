@@ -10,11 +10,13 @@ import org.springframework.web.bind.annotation.RestController;
 import de.hsw.busplaner.dtos.fahrtstrecke.FahrtstreckeInputDTO;
 import de.hsw.busplaner.dtos.fahrtstrecke.FahrtstreckeOutputDTO;
 import de.hsw.busplaner.services.FahrtstreckeService;
+import lombok.extern.java.Log;
 
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 
+@Log
 @RestController
 @RequestMapping(path = "/api/fahrtstrecke")
 public class FahrtstreckeController {
@@ -36,7 +38,7 @@ public class FahrtstreckeController {
         ArrayList<FahrtstreckeOutputDTO> fahrtstrecken = new ArrayList<>();
         fahrtstrecken = service.getAlleFahrtstrecken();
         if (fahrtstrecken.isEmpty()) {
-            return ResponseEntity.notFound().build();
+            log.warning("Es sind keine Fahrtstrecken vorhanden");
         }
         return ResponseEntity.ok(fahrtstrecken);
 

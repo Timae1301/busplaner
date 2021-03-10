@@ -43,10 +43,8 @@ public class HaltestelleController {
         ArrayList<HaltestelleOutputDTO> haltestellen = service.getAllHaltestellen();
         if (haltestellen.isEmpty()) {
             log.warning("Es sind keine Haltestellen vorhanden");
-            return ResponseEntity.notFound().build();
         }
         return ResponseEntity.ok(haltestellen);
-
     }
 
     @PostMapping(path = "/{haltestelleName}")
