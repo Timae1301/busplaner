@@ -5,7 +5,6 @@ import java.util.List;
 
 import de.hsw.busplaner.beans.Fahrplan;
 import de.hsw.busplaner.beans.Fahrplanzuordnung;
-import de.hsw.busplaner.dtos.fahrplanzuordnung.FahrplanzuordnungOutputDTO;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;

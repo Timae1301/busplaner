@@ -27,6 +27,7 @@ public class FahrtstreckeController {
     @PostMapping(path = "")
     public ResponseEntity<Long> postFahrtstrecke(@RequestBody FahrtstreckeInputDTO fahrtstreckeInputDTO) {
         try {
+            log.info("wir sind da");
             return ResponseEntity.ok(service.postFahrtstrecke(fahrtstreckeInputDTO));
         } catch (IllegalArgumentException e) {
             return ResponseEntity.notFound().build();
@@ -41,6 +42,9 @@ public class FahrtstreckeController {
             log.warning("Es sind keine Fahrtstrecken vorhanden");
         }
         return ResponseEntity.ok(fahrtstrecken);
+
+        // an das FahrtstreckenOutputDTO ein boolean: löschbar hinzufügen
+        // delete hinzufügen
 
     }
 }

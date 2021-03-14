@@ -11,7 +11,9 @@ import de.hsw.busplaner.beans.Fahrtstrecke;
 import de.hsw.busplaner.dtos.fahrplanzuordnung.FahrplanzuordnungInputDTO;
 import de.hsw.busplaner.dtos.fahrplanzuordnung.FahrplanzuordnungOutputDTO;
 import de.hsw.busplaner.repositories.FahrplanzuordnungRepository;
+import lombok.extern.java.Log;
 
+@Log
 @Service
 public class FahrplanzuordnungService extends BasicService<Fahrplanzuordnung, Long> {
 
@@ -41,6 +43,7 @@ public class FahrplanzuordnungService extends BasicService<Fahrplanzuordnung, Lo
     public ArrayList<FahrplanzuordnungOutputDTO> getAlleFahrplanzuordnungen() {
         ArrayList<FahrplanzuordnungOutputDTO> zuordnungen = new ArrayList<>();
         for (Fahrplanzuordnung fahrplanzuordnung : findAll()) {
+            log.info(String.format("Zuordnung: %s gefunden", fahrplanzuordnung.getId()));
             zuordnungen.add(new FahrplanzuordnungOutputDTO(fahrplanzuordnung));
         }
         return zuordnungen;

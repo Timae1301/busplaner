@@ -36,4 +36,6 @@ public class FahrplanController {
         return ResponseEntity.ok(fahrplaene);
     }
 
+    // TODO: Fahrplan delete
+
 }

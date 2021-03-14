@@ -23,7 +23,7 @@ import lombok.NoArgsConstructor;
 public class Haltestelle {
 
     @Id
-    @GeneratedValue(strategy = GenerationType.AUTO)
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "ID")
     private Long id;
 
