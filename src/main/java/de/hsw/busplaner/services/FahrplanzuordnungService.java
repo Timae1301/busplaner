@@ -49,4 +49,9 @@ public class FahrplanzuordnungService extends BasicService<Fahrplanzuordnung, Lo
         return zuordnungen;
     }
 
+    public ArrayList<Fahrplanzuordnung> getAlleFahrplanzuordnungenZuFahrplan(Fahrplan fahrplan) {
+        ArrayList<Fahrplanzuordnung> zuordnungen = new ArrayList<>();
+        repository.findAllByFahrplanid(fahrplan).forEach(zuordnungen::add);
+        return zuordnungen;
+    }
 }

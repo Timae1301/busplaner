@@ -7,6 +7,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import de.hsw.busplaner.beans.Fahrplan;
+import de.hsw.busplaner.beans.Fahrplanzuordnung;
 import de.hsw.busplaner.dtos.fahrplan.FahrplanOutputDTO;
 import de.hsw.busplaner.repositories.FahrplanRepository;
 import lombok.extern.java.Log;
@@ -17,6 +18,9 @@ public class FahrplanService extends BasicService<Fahrplan, Long> {
 
     @Autowired
     FahrplanRepository repository;
+
+    @Autowired
+    FahrplanzuordnungService fahrplanzuordnungService;
 
     @Override
     protected FahrplanRepository getRepository() {
@@ -44,6 +48,16 @@ public class FahrplanService extends BasicService<Fahrplan, Long> {
             throw new IllegalArgumentException(String.format("Keine Fahrplan zu ID %s gefunden", id));
         }
         return fahrplanOpt.get();
+    }
+
+    public Boolean deleteFahrplan(Long fahrplanId) {
+        ArrayList<Fahrplanzuordnung> fahrplanzuordnungen = fahrplanzuordnungService
+                .getAlleFahrplanzuordnungenZuFahrplan(getFahrplanZuId(fahrplanId));
+        for (Fahrplanzuordnung fahrplanzuordnung : fahrplanzuordnungen) {
+            fahrplanzuordnungService.deleteById(fahrplanzuordnung.getId());
+        }
+        deleteById(fahrplanId);
+        return true;
     }
 
 }
