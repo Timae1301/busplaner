@@ -28,7 +28,7 @@ public class BuslinieService extends BasicService<Buslinie, Long> {
         return repository;
     }
 
-    public Optional<Buslinie> findByBusnr(Long busnr) {
+    public Optional<Buslinie> findByBusnr(Buslinie busnr) {
         return repository.findByBusnr(busnr);
     }
 
@@ -36,7 +36,11 @@ public class BuslinieService extends BasicService<Buslinie, Long> {
         ArrayList<BuslinieOutputDTO> buslinien = new ArrayList<>();
         for (Buslinie buslinie : findAll()) {
             log.info(String.format("Buslinie: %s gefunden", buslinie.getBusnr()));
-            buslinien.add(new BuslinieOutputDTO(buslinie));
+            BuslinieOutputDTO buslinieDto = new BuslinieOutputDTO(buslinie);
+            if (isBuslinieLoeschbar(buslinie.getId())) {
+                buslinieDto.setLoeschbar(true);
+            }
+            buslinien.add(buslinieDto);
         }
         return buslinien;
     }
@@ -46,10 +50,14 @@ public class BuslinieService extends BasicService<Buslinie, Long> {
         return save(new Buslinie(busNr)).getId();
     }
 
-    public BuslinieOutputDTO getBuslinie(Long buslinieId) {
+    public BuslinieOutputDTO getBuslinie(Long buslinieId) throws IllegalArgumentException {
+        return new BuslinieOutputDTO(getBuslinieById(buslinieId));
+    }
+
+    public Buslinie getBuslinieById(Long buslinieId) throws IllegalArgumentException {
         Optional<Buslinie> buslinieOpt = findById(buslinieId);
         if (buslinieOpt.isPresent()) {
-            return new BuslinieOutputDTO(buslinieOpt.get());
+            return buslinieOpt.get();
         }
         throw new IllegalArgumentException(
                 String.format("Zu der BuslinienId %s wurde kein Eintrag gefunden", buslinieId));
@@ -60,19 +68,19 @@ public class BuslinieService extends BasicService<Buslinie, Long> {
         save(buslinie);
     }
 
-    public Boolean deleteBuslinie(Long buslinieId) {
-        Optional<Buslinie> buslinieOpt = findById(buslinieId);
-        if (buslinieOpt.isEmpty()) {
-            throw new IllegalArgumentException(String.format("Die ID %s konnte nicht gefunden werden", buslinieId));
-        }
+    private Boolean isBuslinieLoeschbar(Long buslinieId) {
         List<Fahrtstrecke> fahrtstreckenMitBuslinie = new ArrayList<>();
-        fahrtstreckeService.findAllByBuslinieId(buslinieOpt.get()).forEach(fahrtstreckenMitBuslinie::add);
-        if (fahrtstreckenMitBuslinie.isEmpty()) {
+        Buslinie buslinie = getBuslinieById(buslinieId);
+        fahrtstreckeService.findAllByBuslinieId(buslinie).forEach(fahrtstreckenMitBuslinie::add);
+        return fahrtstreckenMitBuslinie.isEmpty();
+    }
+
+    public Boolean deleteBuslinie(Long buslinieId) throws IllegalArgumentException {
+        boolean isBuslinieLoeschbar = isBuslinieLoeschbar(buslinieId);
+        if (isBuslinieLoeschbar) {
             deleteById(buslinieId);
-            return true;
-        } else {
-            return false;
         }
+        return isBuslinieLoeschbar;
     }
 
 }

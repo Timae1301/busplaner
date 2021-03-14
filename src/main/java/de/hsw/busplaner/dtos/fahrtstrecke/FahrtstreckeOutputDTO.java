@@ -19,6 +19,8 @@ public class FahrtstreckeOutputDTO extends FahrtstreckeDTO {
 
     List<Haltestellenzuordnung> haltestellenzuordnungen;
 
+    boolean loeschbar;
+
     public FahrtstreckeOutputDTO(Fahrtstrecke fahrtstrecke) {
         this.id = fahrtstrecke.getId();
         this.fahrplanzuordnungen = fahrtstrecke.getFahrplanzuordnungen();

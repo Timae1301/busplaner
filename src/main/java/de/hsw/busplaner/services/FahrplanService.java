@@ -51,12 +51,13 @@ public class FahrplanService extends BasicService<Fahrplan, Long> {
     }
 
     public Boolean deleteFahrplan(Long fahrplanId) {
+        Fahrplan fahrplan = getFahrplanZuId(fahrplanId);
         ArrayList<Fahrplanzuordnung> fahrplanzuordnungen = fahrplanzuordnungService
-                .getAlleFahrplanzuordnungenZuFahrplan(getFahrplanZuId(fahrplanId));
+                .getAlleFahrplanzuordnungenZuFahrplanId(fahrplan);
         for (Fahrplanzuordnung fahrplanzuordnung : fahrplanzuordnungen) {
             fahrplanzuordnungService.deleteById(fahrplanzuordnung.getId());
         }
-        deleteById(fahrplanId);
+        deleteById(fahrplan.getId());
         return true;
     }
 

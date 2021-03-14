@@ -12,7 +12,9 @@ import de.hsw.busplaner.dtos.fahrtstrecke.FahrtstreckeOutputDTO;
 import de.hsw.busplaner.services.FahrtstreckeService;
 import lombok.extern.java.Log;
 
+import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 
@@ -27,7 +29,6 @@ public class FahrtstreckeController {
     @PostMapping(path = "")
     public ResponseEntity<Long> postFahrtstrecke(@RequestBody FahrtstreckeInputDTO fahrtstreckeInputDTO) {
         try {
-            log.info("wir sind da");
             return ResponseEntity.ok(service.postFahrtstrecke(fahrtstreckeInputDTO));
         } catch (IllegalArgumentException e) {
             return ResponseEntity.notFound().build();
@@ -42,9 +43,14 @@ public class FahrtstreckeController {
             log.warning("Es sind keine Fahrtstrecken vorhanden");
         }
         return ResponseEntity.ok(fahrtstrecken);
+    }
 
-        // an das FahrtstreckenOutputDTO ein boolean: löschbar hinzufügen
-        // delete hinzufügen
-
+    @DeleteMapping(path = "/{fahrtstreckeId}")
+    public ResponseEntity<Boolean> deleteFahrtstreckeById(@PathVariable Long fahrtstreckeId) {
+        try {
+            return ResponseEntity.ok(service.deleteFahrtstrecke(fahrtstreckeId));
+        } catch (IllegalArgumentException e) {
+            return ResponseEntity.ok(true);
+        }
     }
 }

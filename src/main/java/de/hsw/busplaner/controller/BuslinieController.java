@@ -75,8 +75,6 @@ public class BuslinieController {
         }
     }
 
-    // an das BuslinienOutputDTO ein boolean: löschbar hinzufügen
-
     @DeleteMapping(path = "/{buslinieId}")
     public ResponseEntity<Boolean> deleteBuslinie(@PathVariable Long buslinieId) {
         try {

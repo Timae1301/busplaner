@@ -9,5 +9,5 @@ import org.springframework.stereotype.Repository;
 
 @Repository
 public interface BuslinieRepository extends CrudRepository<Buslinie, Long> {
-    Optional<Buslinie> findByBusnr(long busnr);
+    Optional<Buslinie> findByBusnr(Buslinie busnr);
 }

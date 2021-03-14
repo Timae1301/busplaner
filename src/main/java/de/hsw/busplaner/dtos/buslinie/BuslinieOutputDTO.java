@@ -12,6 +12,8 @@ public class BuslinieOutputDTO extends BuslinieDTO {
 
     private Long id;
 
+    private boolean loeschbar;
+
     public BuslinieOutputDTO(Buslinie buslinie) {
         this.id = buslinie.getId();
         setBusnr(buslinie.getBusnr());
