@@ -12,6 +12,8 @@ public class HaltestelleOutputDTO extends HaltestelleDTO {
 
     Long id;
 
+    boolean loeschbar;
+
     public HaltestelleOutputDTO(Haltestelle haltestelle) {
         this.id = haltestelle.getId();
         super.setName(haltestelle.getName());

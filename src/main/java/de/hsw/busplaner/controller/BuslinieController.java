@@ -38,6 +38,7 @@ public class BuslinieController {
     public BuslinieController(final BuslinieService service) {
         this.service = service;
     }
+    // TODO get Alle Buslinien die eine haltestelle anfahren
 
     @GetMapping(path = "")
     public ResponseEntity<ArrayList<BuslinieOutputDTO>> getAllBuslinie() {

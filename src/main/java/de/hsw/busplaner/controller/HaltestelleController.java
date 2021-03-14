@@ -75,6 +75,4 @@ public class HaltestelleController {
             return ResponseEntity.ok(true);
         }
     }
-
-    // an das HaltestellenOutputDTO ein boolean: löschbar hinzufügen
 }

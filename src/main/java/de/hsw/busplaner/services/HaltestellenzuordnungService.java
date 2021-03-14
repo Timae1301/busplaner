@@ -35,8 +35,8 @@ public class HaltestellenzuordnungService extends BasicService<Haltestellenzuord
         Fahrtstrecke fahrtstrecke = fahrtstreckeService
                 .getFahrtstreckeZuId(haltestellenzuordnungInputDTO.getFahrtstreckeId());
         Haltestelle haltestelle = haltestelleService
-                .getHaltestelleZuId(haltestellenzuordnungInputDTO.getHaltestelleId());
-        haltestelleService.getHaltestelleZuId(haltestellenzuordnungInputDTO.getNaechsteHaltestelle());
+                .getHaltestelleById(haltestellenzuordnungInputDTO.getHaltestelleId());
+        haltestelleService.getHaltestelleById(haltestellenzuordnungInputDTO.getNaechsteHaltestelle());
 
         Haltestellenzuordnung haltestellenzuordnung = new Haltestellenzuordnung(haltestellenzuordnungInputDTO,
                 fahrtstrecke, haltestelle);
@@ -48,7 +48,7 @@ public class HaltestellenzuordnungService extends BasicService<Haltestellenzuord
         ArrayList<HaltestellenzuordnungOutputDTO> zuordnungen = new ArrayList<>();
         for (Haltestellenzuordnung zuordnung : findAll()) {
             log.info(String.format("Zuordnung: %s gefunden", zuordnung.getId()));
-            Haltestelle neachsteHaltestelle = haltestelleService.getHaltestelleZuId(zuordnung.getNaechsteHaltestelle());
+            Haltestelle neachsteHaltestelle = haltestelleService.getHaltestelleById(zuordnung.getNaechsteHaltestelle());
 
             zuordnungen.add(new HaltestellenzuordnungOutputDTO(zuordnung, neachsteHaltestelle));
         }
@@ -59,7 +59,7 @@ public class HaltestellenzuordnungService extends BasicService<Haltestellenzuord
         Fahrtstrecke fahrtstrecke = fahrtstreckeService.getFahrtstreckeZuId(fahrtstreckeId);
         ArrayList<HaltestellenzuordnungOutputDTO> zuordnungen = new ArrayList<>();
         for (Haltestellenzuordnung zuordnung : repository.findAllByFahrtstreckeid(fahrtstrecke)) {
-            Haltestelle neachsteHaltestelle = haltestelleService.getHaltestelleZuId(zuordnung.getNaechsteHaltestelle());
+            Haltestelle neachsteHaltestelle = haltestelleService.getHaltestelleById(zuordnung.getNaechsteHaltestelle());
             zuordnungen.add(new HaltestellenzuordnungOutputDTO(zuordnung, neachsteHaltestelle));
         }
         return zuordnungen;

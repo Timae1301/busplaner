@@ -7,6 +7,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import de.hsw.busplaner.beans.Haltestelle;
+import de.hsw.busplaner.beans.Haltestellenzuordnung;
 import de.hsw.busplaner.dtos.haltestelle.HaltestelleOutputDTO;
 import de.hsw.busplaner.repositories.HaltestelleRepository;
 import lombok.extern.java.Log;
@@ -18,6 +19,9 @@ public class HaltestelleService extends BasicService<Haltestelle, Long> {
     @Autowired
     private HaltestelleRepository repository;
 
+    @Autowired
+    private HaltestellenzuordnungService haltestellenzuordnungService;
+
     @Override
     protected HaltestelleRepository getRepository() {
         return repository;
@@ -27,7 +31,11 @@ public class HaltestelleService extends BasicService<Haltestelle, Long> {
         ArrayList<HaltestelleOutputDTO> haltestellen = new ArrayList<>();
         for (Haltestelle haltestelle : findAll()) {
             log.info(String.format("Haltestelle: %s gefunden", haltestelle.getId()));
-            haltestellen.add(new HaltestelleOutputDTO(haltestelle));
+            HaltestelleOutputDTO haltestelleDto = new HaltestelleOutputDTO(haltestelle);
+            if (isHaltestelleLoeschbar(haltestelle.getId())) {
+                haltestelleDto.setLoeschbar(true);
+            }
+            haltestellen.add(haltestelleDto);
         }
         return haltestellen;
     }
@@ -51,21 +59,28 @@ public class HaltestelleService extends BasicService<Haltestelle, Long> {
         save(haltestelle);
     }
 
-    public Boolean deleteHaltestelle(Long haltestelleId) {
-        Optional<Haltestelle> haltestelleOpt = findById(haltestelleId);
-        if (haltestelleOpt.isEmpty()) {
-            throw new IllegalArgumentException(
-                    String.format("Zu der ID: %s wurde keine Haltestelle gefunden", haltestelleId));
-        }
-        Haltestelle haltestelle = haltestelleOpt.get();
-        if (haltestelle.getHaltestellenzuordnungen().isEmpty()) {
-            delete(haltestelle);
+    public Boolean deleteHaltestelle(Long haltestelleId) throws IllegalArgumentException {
+        if (isHaltestelleLoeschbar(haltestelleId)) {
+            deleteById(haltestelleId);
             return true;
         }
         return false;
     }
 
-    public Haltestelle getHaltestelleZuId(Long id) {
+    private Boolean isHaltestelleLoeschbar(Long haltestelleId) {
+        Haltestelle haltestelle = getHaltestelleById(haltestelleId);
+        if (haltestelle.getHaltestellenzuordnungen().isEmpty()) {
+            for (Haltestellenzuordnung haltestellenzuordnung : haltestellenzuordnungService.findAll()) {
+                if (haltestellenzuordnung.getNaechsteHaltestelle().equals(haltestelleId)) {
+                    return false;
+                }
+            }
+            return true;
+        }
+        return false;
+    }
+
+    public Haltestelle getHaltestelleById(Long id) throws IllegalArgumentException {
         Optional<Haltestelle> haltestelleOpt = findById(id);
         if (haltestelleOpt.isEmpty()) {
             throw new IllegalArgumentException(String.format("Keine Haltestelle zu ID %s gefunden", id));
