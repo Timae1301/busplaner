@@ -11,6 +11,7 @@ import de.hsw.busplaner.beans.Fahrplanzuordnung;
 import de.hsw.busplaner.beans.Fahrtstrecke;
 import de.hsw.busplaner.dtos.fahrtstrecke.FahrtstreckeInputDTO;
 import de.hsw.busplaner.dtos.fahrtstrecke.FahrtstreckeOutputDTO;
+import de.hsw.busplaner.dtos.haltestellenzuordnung.HaltestellenzuordnungOutputDTO;
 import de.hsw.busplaner.repositories.FahrtstreckeRepository;
 
 @Service
@@ -24,6 +25,9 @@ public class FahrtstreckeService extends BasicService<Fahrtstrecke, Long> {
 
     @Autowired
     FahrplanzuordnungService fahrplanzuordnungService;
+
+    @Autowired
+    HaltestellenzuordnungService haltestellenzuordnungService;
 
     @Override
     protected FahrtstreckeRepository getRepository() {
@@ -70,6 +74,10 @@ public class FahrtstreckeService extends BasicService<Fahrtstrecke, Long> {
     public Boolean deleteFahrtstrecke(Long fahrtstreckeId) {
         Fahrtstrecke fahrtstrecke = getFahrtstreckeZuId(fahrtstreckeId);
         if (isFahrtstreckeLoeschbar(fahrtstrecke)) {
+            for (HaltestellenzuordnungOutputDTO zuordnung : haltestellenzuordnungService
+                    .getAlleZuordnungenZuFahrtstrecke(fahrtstreckeId)) {
+                haltestellenzuordnungService.deleteById(zuordnung.getId());
+            }
             deleteById(fahrtstrecke.getId());
             return true;
         }

@@ -51,7 +51,6 @@ public class FahrtstreckeController {
     public ResponseEntity<Boolean> deleteFahrtstreckeById(@PathVariable Long fahrtstreckeId) {
         try {
             return ResponseEntity.ok(service.deleteFahrtstrecke(fahrtstreckeId));
-            // TODO: Beim Löschen auch die Haltestellenzuordnungen löschen
         } catch (IllegalArgumentException e) {
             return ResponseEntity.ok(true);
         }

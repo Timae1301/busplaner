@@ -12,6 +12,7 @@ import lombok.NoArgsConstructor;
 @EqualsAndHashCode(callSuper = false)
 @NoArgsConstructor
 public class FahrtstreckeOutputFahrplanDTO extends FahrtstreckeDTO {
+
     Long id;
 
     List<Haltestellenzuordnung> haltestellenzuordnungen;

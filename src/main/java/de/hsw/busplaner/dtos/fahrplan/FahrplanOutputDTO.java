@@ -19,9 +19,6 @@ public class FahrplanOutputDTO extends FahrplanDTO {
 
     private List<FahrplanzuordnungOutputFahrplanDTO> fahrplanzuordnungen = new ArrayList<>();
 
-    // private List<FahrtstreckeOutputDTO> fahrtstrecken = new ArrayList<>();
-    // TODO: infos zu Fahrtstrecken
-
     public FahrplanOutputDTO(Fahrplan fahrplan) {
         this.id = fahrplan.getId();
         super.setName(fahrplan.getName());
