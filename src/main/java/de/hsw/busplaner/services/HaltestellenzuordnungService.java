@@ -70,7 +70,7 @@ public class HaltestellenzuordnungService extends BasicService<Haltestellenzuord
         return haltestellenSortierer.sortiereHaltestellen(zuordnungen);
     }
 
-    public ArrayList<HaltestellenzuordnungOutputDTO> getAlleZuordnungenZuFahrtstrecke(Long fahrtstreckeId) {
+    public ArrayList<HaltestellenzuordnungOutputDTO> getAlleZuordnungenDTOsZuFahrtstrecke(Long fahrtstreckeId) {
         Fahrtstrecke fahrtstrecke = fahrtstreckeService.getFahrtstreckeZuId(fahrtstreckeId);
         ArrayList<HaltestellenzuordnungOutputDTO> zuordnungen = new ArrayList<>();
         for (Haltestellenzuordnung zuordnung : repository.findAllByFahrtstreckeid(fahrtstrecke)) {
@@ -79,4 +79,14 @@ public class HaltestellenzuordnungService extends BasicService<Haltestellenzuord
         }
         return zuordnungen;
     }
+
+    public ArrayList<Haltestellenzuordnung> getAlleZuordnungenZuFahrtstrecke(Long fahrtstreckeId) {
+        Fahrtstrecke fahrtstrecke = fahrtstreckeService.getFahrtstreckeZuId(fahrtstreckeId);
+        ArrayList<Haltestellenzuordnung> zuordnungen = new ArrayList<>();
+        for (Haltestellenzuordnung zuordnung : repository.findAllByFahrtstreckeid(fahrtstrecke)) {
+            zuordnungen.add(zuordnung);
+        }
+        return zuordnungen;
+    }
+
 }

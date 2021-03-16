@@ -74,7 +74,7 @@ public class HaltestellenzuordnungController {
     public ResponseEntity<ArrayList<HaltestellenzuordnungOutputDTO>> getAlleZuordnungenZuFahrtstrecke(
             @PathVariable Long fahrtstreckeId) {
         ArrayList<HaltestellenzuordnungOutputDTO> zuordnungen = new ArrayList<>();
-        zuordnungen = service.getAlleZuordnungenZuFahrtstrecke(fahrtstreckeId);
+        zuordnungen = service.getAlleZuordnungenDTOsZuFahrtstrecke(fahrtstreckeId);
         if (zuordnungen.isEmpty()) {
             return ResponseEntity.notFound().build();
         }

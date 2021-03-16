@@ -40,7 +40,7 @@ public class FahrtstreckeService extends BasicService<Fahrtstrecke, Long> {
 
     public Long postFahrtstrecke(FahrtstreckeInputDTO fahrtstreckeInputDTO) throws IllegalArgumentException {
         Fahrtstrecke fahrtstrecke = new Fahrtstrecke(fahrtstreckeInputDTO,
-                buslinieService.getBuslinieById(fahrtstreckeInputDTO.getBuslinieId()));
+                buslinieService.findByBusnr(fahrtstreckeInputDTO.getBuslinie()));
         save(fahrtstrecke);
         return fahrtstrecke.getId();
     }
@@ -75,7 +75,7 @@ public class FahrtstreckeService extends BasicService<Fahrtstrecke, Long> {
         Fahrtstrecke fahrtstrecke = getFahrtstreckeZuId(fahrtstreckeId);
         if (isFahrtstreckeLoeschbar(fahrtstrecke)) {
             for (HaltestellenzuordnungOutputDTO zuordnung : haltestellenzuordnungService
-                    .getAlleZuordnungenZuFahrtstrecke(fahrtstreckeId)) {
+                    .getAlleZuordnungenDTOsZuFahrtstrecke(fahrtstreckeId)) {
                 haltestellenzuordnungService.deleteById(zuordnung.getId());
             }
             deleteById(fahrtstrecke.getId());

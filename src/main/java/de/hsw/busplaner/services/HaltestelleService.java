@@ -3,13 +3,17 @@ package de.hsw.busplaner.services;
 import java.util.ArrayList;
 import java.util.Optional;
 
+import javax.management.InstanceNotFoundException;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import de.hsw.busplaner.beans.Haltestelle;
 import de.hsw.busplaner.beans.Haltestellenzuordnung;
 import de.hsw.busplaner.dtos.haltestelle.HaltestelleOutputDTO;
+import de.hsw.busplaner.dtos.haltestellenzuordnung.HaltestellenzuordnungSortierDTO;
 import de.hsw.busplaner.repositories.HaltestelleRepository;
+import de.hsw.busplaner.util.HaltestellenSortierer;
 import lombok.extern.java.Log;
 
 @Log
@@ -21,6 +25,9 @@ public class HaltestelleService extends BasicService<Haltestelle, Long> {
 
     @Autowired
     private HaltestellenzuordnungService haltestellenzuordnungService;
+
+    @Autowired
+    private HaltestellenSortierer sortierer;
 
     @Override
     protected HaltestelleRepository getRepository() {
@@ -76,6 +83,18 @@ public class HaltestelleService extends BasicService<Haltestelle, Long> {
                 }
             }
             return true;
+        }
+        return false;
+    }
+
+    public Boolean isHaltestelleInFahrtstrecke(Long haltestelleId, Long fahrtstreckeId)
+            throws InstanceNotFoundException {
+        ArrayList<Haltestellenzuordnung> zuordnungen = haltestellenzuordnungService
+                .getAlleZuordnungenZuFahrtstrecke(fahrtstreckeId);
+        for (HaltestellenzuordnungSortierDTO haltestellenzuordnung : sortierer.sortiereHaltestellen(zuordnungen)) {
+            if (haltestellenzuordnung.getHaltestelleId().equals(haltestelleId)) {
+                return true;
+            }
         }
         return false;
     }

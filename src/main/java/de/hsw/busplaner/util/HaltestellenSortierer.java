@@ -24,10 +24,13 @@ public class HaltestellenSortierer {
     public ArrayList<HaltestellenzuordnungSortierDTO> sortiereHaltestellen(
             ArrayList<Haltestellenzuordnung> haltestellenzuordnungen) throws InstanceNotFoundException {
         ArrayList<HaltestellenzuordnungSortierDTO> sortierteHaltestellen = new ArrayList<>();
-
+        if (haltestellenzuordnungen.isEmpty()) {
+            log.info("Es wurden keine Haltestellenzuordnungen uebergeben");
+            return sortierteHaltestellen;
+        }
         Haltestellenzuordnung naechsteHaltestelle = getErsteHaltestelle(haltestellenzuordnungen);
         if (naechsteHaltestelle == null) {
-            log.warning("keine erste Haltestelle gefunden");
+            log.warning("Keine erste Haltestelle gefunden");
             throw new InstanceNotFoundException("keine erste Haltestelle, Prüfung auf Rundkurs");
         }
         sortierteHaltestellen.add(new HaltestellenzuordnungSortierDTO(naechsteHaltestelle));
@@ -37,7 +40,7 @@ public class HaltestellenSortierer {
             naechsteHaltestelle = getNaechsteHaltestelle(haltestellenzuordnungen,
                     naechsteHaltestelle.getNaechsteHaltestelle());
             if (naechsteHaltestelle == null) {
-                log.warning("keine naechste Haltestelle gefunden " + haltestellenzuordnungen.size());
+                log.warning("Keine naechste Haltestelle gefunden " + haltestellenzuordnungen.size());
                 throw new InstanceNotFoundException("Haltestelle nicht gefunden, Daten ungenügend");
             }
             sortierteHaltestellen.add(new HaltestellenzuordnungSortierDTO(naechsteHaltestelle));

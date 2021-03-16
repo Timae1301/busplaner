@@ -3,6 +3,8 @@ package de.hsw.busplaner.controller;
 import java.util.ArrayList;
 import java.util.Comparator;
 
+import javax.management.InstanceNotFoundException;
+
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.github.fge.jsonpatch.JsonPatch;
 import com.github.fge.jsonpatch.JsonPatchException;
@@ -38,7 +40,19 @@ public class BuslinieController {
     public BuslinieController(final BuslinieService service) {
         this.service = service;
     }
-    // TODO get Alle Buslinien die eine haltestelle anfahren
+
+    @GetMapping(path = "/haltestelle/{haltestelleId}")
+    public ResponseEntity<ArrayList<BuslinieOutputDTO>> getAlleBuslinienFuerHaltestelle(
+            @PathVariable Long haltestelleId) {
+        ArrayList<BuslinieOutputDTO> buslinien = new ArrayList<>();
+        try {
+            buslinien.addAll(service.getAlleBuslinienFuerHaltestelle(haltestelleId));
+        } catch (InstanceNotFoundException e) {
+            log.warning("Fehler beim Finden der Haltestellen");
+            return ResponseEntity.notFound().build();
+        }
+        return ResponseEntity.ok(buslinien);
+    }
 
     @GetMapping(path = "")
     public ResponseEntity<ArrayList<BuslinieOutputDTO>> getAllBuslinie() {

@@ -9,5 +9,5 @@ public abstract class FahrtstreckeDTO {
 
     String name;
 
-    Long buslinieId;
+    Long buslinie;
 }

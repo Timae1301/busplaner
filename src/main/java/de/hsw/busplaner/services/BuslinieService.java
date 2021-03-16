@@ -1,17 +1,20 @@
 package de.hsw.busplaner.services;
 
-import de.hsw.busplaner.beans.Buslinie;
-import de.hsw.busplaner.beans.Fahrtstrecke;
-import de.hsw.busplaner.dtos.buslinie.BuslinieOutputDTO;
-import de.hsw.busplaner.repositories.BuslinieRepository;
-import lombok.extern.java.Log;
-
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
+import javax.management.InstanceNotFoundException;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+
+import de.hsw.busplaner.beans.Buslinie;
+import de.hsw.busplaner.beans.Fahrtstrecke;
+import de.hsw.busplaner.dtos.buslinie.BuslinieOutputDTO;
+import de.hsw.busplaner.dtos.fahrtstrecke.FahrtstreckeOutputDTO;
+import de.hsw.busplaner.repositories.BuslinieRepository;
+import lombok.extern.java.Log;
 
 @Service
 @Log
@@ -23,13 +26,21 @@ public class BuslinieService extends BasicService<Buslinie, Long> {
     @Autowired
     private FahrtstreckeService fahrtstreckeService;
 
+    @Autowired
+    private HaltestelleService haltestelleService;
+
     @Override
     protected BuslinieRepository getRepository() {
         return repository;
     }
 
-    public Optional<Buslinie> findByBusnr(Buslinie busnr) {
-        return repository.findByBusnr(busnr);
+    public Buslinie findByBusnr(Long busnr) {
+        Optional<Buslinie> buslinieOpt = repository.findByBusnr(busnr);
+        if (buslinieOpt.isPresent()) {
+            return buslinieOpt.get();
+        }
+        log.warning("Kein Eintrag für BusNr: " + busnr);
+        throw new IllegalArgumentException(String.format("Zu der BusNr %s wurde kein Eintrag gefunden", busnr));
     }
 
     public ArrayList<BuslinieOutputDTO> getAllBuslinien() {
@@ -81,6 +92,17 @@ public class BuslinieService extends BasicService<Buslinie, Long> {
             deleteById(buslinieId);
         }
         return isBuslinieLoeschbar;
+    }
+
+    public ArrayList<BuslinieOutputDTO> getAlleBuslinienFuerHaltestelle(Long haltestelleId)
+            throws InstanceNotFoundException {
+        ArrayList<BuslinieOutputDTO> buslinien = new ArrayList<>();
+        for (FahrtstreckeOutputDTO fahrtstreckeOutputDTO : fahrtstreckeService.getAlleFahrtstrecken()) {
+            if (haltestelleService.isHaltestelleInFahrtstrecke(haltestelleId, fahrtstreckeOutputDTO.getId())) {
+                buslinien.add(new BuslinieOutputDTO(findByBusnr(fahrtstreckeOutputDTO.getBuslinie())));
+            }
+        }
+        return buslinien;
     }
 
 }

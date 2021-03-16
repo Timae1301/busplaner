@@ -26,6 +26,6 @@ public class FahrtstreckeOutputDTO extends FahrtstreckeDTO {
         this.fahrplanzuordnungen = fahrtstrecke.getFahrplanzuordnungen();
         this.haltestellenzuordnungen = fahrtstrecke.getHaltestellenzuordnungen();
         super.name = fahrtstrecke.getName();
-        super.buslinieId = fahrtstrecke.getBuslinieId().getBusnr();
+        super.buslinie = fahrtstrecke.getBuslinieId().getBusnr();
     }
 }
