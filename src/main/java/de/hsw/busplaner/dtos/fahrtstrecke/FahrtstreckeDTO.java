@@ -8,6 +8,4 @@ import lombok.NoArgsConstructor;
 public abstract class FahrtstreckeDTO {
 
     String name;
-
-    Long buslinie;
 }

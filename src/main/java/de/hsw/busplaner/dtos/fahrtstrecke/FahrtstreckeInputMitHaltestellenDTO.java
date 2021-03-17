@@ -13,4 +13,6 @@ import lombok.NoArgsConstructor;
 public class FahrtstreckeInputMitHaltestellenDTO extends FahrtstreckeDTO {
 
     ArrayList<HaltestellenzuordnungOhneNaechsteHaltestelleInputDTO> haltestellen;
+
+    Long buslinieId;
 }

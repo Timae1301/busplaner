@@ -86,7 +86,7 @@ public class FahrtstreckeController {
     private FahrtstreckeInputDTO genNewFahrtstreckeInputDTO(
             FahrtstreckeInputMitHaltestellenDTO fahrtstreckeInputMitHaltestellenDTO) {
         FahrtstreckeInputDTO fahrtstreckeInputDTO = new FahrtstreckeInputDTO();
-        fahrtstreckeInputDTO.setBuslinie(fahrtstreckeInputMitHaltestellenDTO.getBuslinie());
+        fahrtstreckeInputDTO.setBuslinieId(fahrtstreckeInputMitHaltestellenDTO.getBuslinieId());
         fahrtstreckeInputDTO.setName(fahrtstreckeInputMitHaltestellenDTO.getName());
         return fahrtstreckeInputDTO;
     }

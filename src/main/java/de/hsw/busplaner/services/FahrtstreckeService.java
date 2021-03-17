@@ -47,7 +47,7 @@ public class FahrtstreckeService extends BasicService<Fahrtstrecke, Long> {
 
     public Long postFahrtstrecke(FahrtstreckeInputDTO fahrtstreckeInputDTO) throws IllegalArgumentException {
         Fahrtstrecke fahrtstrecke = new Fahrtstrecke(fahrtstreckeInputDTO,
-                buslinieService.findByBusnr(fahrtstreckeInputDTO.getBuslinie()));
+                buslinieService.getBuslinieById(fahrtstreckeInputDTO.getBuslinieId()));
         save(fahrtstrecke);
         return fahrtstrecke.getId();
     }
