@@ -3,6 +3,8 @@ package de.hsw.busplaner.services;
 import java.util.ArrayList;
 import java.util.Optional;
 
+import javax.management.InstanceNotFoundException;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -10,9 +12,11 @@ import de.hsw.busplaner.beans.Buslinie;
 import de.hsw.busplaner.beans.Fahrplanzuordnung;
 import de.hsw.busplaner.beans.Fahrtstrecke;
 import de.hsw.busplaner.dtos.fahrtstrecke.FahrtstreckeInputDTO;
+import de.hsw.busplaner.dtos.fahrtstrecke.FahrtstreckeMitHaltestellenDTO;
 import de.hsw.busplaner.dtos.fahrtstrecke.FahrtstreckeOutputDTO;
 import de.hsw.busplaner.dtos.haltestellenzuordnung.HaltestellenzuordnungOutputDTO;
 import de.hsw.busplaner.repositories.FahrtstreckeRepository;
+import de.hsw.busplaner.util.HaltestellenSortierer;
 
 @Service
 public class FahrtstreckeService extends BasicService<Fahrtstrecke, Long> {
@@ -28,6 +32,9 @@ public class FahrtstreckeService extends BasicService<Fahrtstrecke, Long> {
 
     @Autowired
     HaltestellenzuordnungService haltestellenzuordnungService;
+
+    @Autowired
+    HaltestellenSortierer sortierer;
 
     @Override
     protected FahrtstreckeRepository getRepository() {
@@ -82,6 +89,16 @@ public class FahrtstreckeService extends BasicService<Fahrtstrecke, Long> {
             return true;
         }
         return false;
+    }
+
+    public ArrayList<FahrtstreckeMitHaltestellenDTO> getAlleFahrtstreckenZuBuslinieId(Long buslinieId)
+            throws InstanceNotFoundException {
+        ArrayList<FahrtstreckeMitHaltestellenDTO> alleFahrtstrecken = new ArrayList<>();
+        for (Fahrtstrecke fahrtstrecke : findAllByBuslinieId(buslinieService.getBuslinieById(buslinieId))) {
+            alleFahrtstrecken.add(new FahrtstreckeMitHaltestellenDTO(fahrtstrecke,
+                    sortierer.sortiereHaltestellen(fahrtstrecke.getHaltestellenzuordnungen())));
+        }
+        return alleFahrtstrecken;
     }
 
 }
