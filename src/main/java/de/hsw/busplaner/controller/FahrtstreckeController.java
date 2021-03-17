@@ -1,6 +1,7 @@
 package de.hsw.busplaner.controller;
 
 import java.util.ArrayList;
+import java.util.List;
 
 import javax.management.InstanceNotFoundException;
 
@@ -15,8 +16,11 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import de.hsw.busplaner.dtos.fahrtstrecke.FahrtstreckeInputDTO;
+import de.hsw.busplaner.dtos.fahrtstrecke.FahrtstreckeInputMitHaltestellenDTO;
 import de.hsw.busplaner.dtos.fahrtstrecke.FahrtstreckeMitHaltestellenDTO;
 import de.hsw.busplaner.dtos.fahrtstrecke.FahrtstreckeOutputDTO;
+import de.hsw.busplaner.dtos.haltestellenzuordnung.HaltestellenzuordnungInputDTO;
+import de.hsw.busplaner.dtos.haltestellenzuordnung.HaltestellenzuordnungOhneNaechsteHaltestelleInputDTO;
 import de.hsw.busplaner.services.FahrtstreckeService;
 import lombok.extern.java.Log;
 
@@ -28,6 +32,9 @@ public class FahrtstreckeController {
     @Autowired
     FahrtstreckeService service;
 
+    @Autowired
+    HaltestellenzuordnungController haltestellenzuordnungController;
+
     @PostMapping(path = "")
     public ResponseEntity<Long> postFahrtstrecke(@RequestBody FahrtstreckeInputDTO fahrtstreckeInputDTO) {
         try {
@@ -35,6 +42,51 @@ public class FahrtstreckeController {
         } catch (IllegalArgumentException e) {
             return ResponseEntity.notFound().build();
         }
+    }
+
+    @PostMapping(path = "/haltestellen")
+    public ResponseEntity<Long> postFahrtstreckeMitHaltestellen(
+            @RequestBody FahrtstreckeInputMitHaltestellenDTO fahrtstreckeInputMitHaltestellenDTO) {
+        try {
+            Long fahrtstreckeId = service
+                    .postFahrtstrecke(genNewFahrtstreckeInputDTO(fahrtstreckeInputMitHaltestellenDTO));
+            List<HaltestellenzuordnungInputDTO> haltestellenzuordnungInputDTOs = genHaltestellenzuordnungInputDTOs(
+                    fahrtstreckeInputMitHaltestellenDTO, fahrtstreckeId);
+            haltestellenzuordnungController.postZuordnungen(haltestellenzuordnungInputDTOs);
+            return ResponseEntity.ok(fahrtstreckeId);
+        } catch (IllegalArgumentException e) {
+            return ResponseEntity.notFound().build();
+        }
+    }
+
+    private List<HaltestellenzuordnungInputDTO> genHaltestellenzuordnungInputDTOs(
+            FahrtstreckeInputMitHaltestellenDTO fahrtstreckeInputMitHaltestellenDTO, Long fahrtstreckeId) {
+        List<HaltestellenzuordnungInputDTO> zuordnungDtos = new ArrayList<>();
+
+        for (int i = 0; i < fahrtstreckeInputMitHaltestellenDTO.getHaltestellen().size(); i++) {
+            HaltestellenzuordnungOhneNaechsteHaltestelleInputDTO haltestelle = fahrtstreckeInputMitHaltestellenDTO
+                    .getHaltestellen().get(i);
+            if (i + 1 - fahrtstreckeInputMitHaltestellenDTO.getHaltestellen().size() == 0) {
+                break;
+            }
+            HaltestellenzuordnungInputDTO zuordnung = new HaltestellenzuordnungInputDTO();
+            zuordnung.setFahrtstreckeId(fahrtstreckeId);
+            zuordnung.setHaltestelleId(haltestelle.getHaltestelleId());
+
+            zuordnung.setFahrtzeit(haltestelle.getFahrtzeit());
+            zuordnung.setNaechsteHaltestelle(
+                    fahrtstreckeInputMitHaltestellenDTO.getHaltestellen().get(i + 1).getHaltestelleId());
+            zuordnungDtos.add(zuordnung);
+        }
+        return zuordnungDtos;
+    }
+
+    private FahrtstreckeInputDTO genNewFahrtstreckeInputDTO(
+            FahrtstreckeInputMitHaltestellenDTO fahrtstreckeInputMitHaltestellenDTO) {
+        FahrtstreckeInputDTO fahrtstreckeInputDTO = new FahrtstreckeInputDTO();
+        fahrtstreckeInputDTO.setBuslinie(fahrtstreckeInputMitHaltestellenDTO.getBuslinie());
+        fahrtstreckeInputDTO.setName(fahrtstreckeInputMitHaltestellenDTO.getName());
+        return fahrtstreckeInputDTO;
     }
 
     @GetMapping(path = "/buslinie/{buslinieId}")

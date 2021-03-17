@@ -109,4 +109,4 @@ insert into T_FAHRPLANZUORDNUNG(
         STARTZEITPUNKT,
         RICHTUNG
     )
-VALUES (1, 1, '10', true);
+VALUES (1, 1, '10:00:00', true);
