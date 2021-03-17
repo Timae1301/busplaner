@@ -72,7 +72,7 @@ public class HaltestellenzuordnungController {
         return ResponseEntity.ok(zuordnungen);
     }
 
-    @GetMapping(path = "{fahrtstreckeId}")
+    @GetMapping(path = "/{fahrtstreckeId}")
     public ResponseEntity<ArrayList<HaltestellenzuordnungOutputDTO>> getAlleZuordnungenZuFahrtstrecke(
             @PathVariable Long fahrtstreckeId) {
         ArrayList<HaltestellenzuordnungOutputDTO> zuordnungen = new ArrayList<>();

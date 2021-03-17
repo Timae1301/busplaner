@@ -6,6 +6,7 @@ insert into T_BUSLINIE(BUSNR)
 VALUES (2010);
 insert into T_BUSLINIE(BUSNR)
 VALUES (2012);
+
 insert into T_HALTESTELLE(NAME)
 VALUES ('Schule');
 insert into T_HALTESTELLE(NAME)
@@ -28,6 +29,7 @@ insert into T_FAHRPLAN(NAME)
 VALUES ('Fahrplan 1');
 insert into T_FAHRPLAN(NAME)
 VALUES ('Fahrplan Schulzeit');
+
 insert into T_FAHRTSTRECKE(NAME, BUSLINIE_ID)
 VALUES ('Stadtrundfahrt', 1);
 insert into T_FAHRTSTRECKE(NAME, BUSLINIE_ID)
@@ -40,6 +42,7 @@ insert into T_FAHRTSTRECKE(NAME, BUSLINIE_ID)
 VALUES ('Sehenswürdigkeiten', 2);
 insert into T_FAHRTSTRECKE(NAME, BUSLINIE_ID)
 VALUES ('Arbeitsweg', 2);
+
 insert into T_HALTESTELLENZUORDNUNG(
         FAHRTSTRECKEID,
         HALTESTELLEID,
@@ -103,6 +106,7 @@ insert into T_HALTESTELLENZUORDNUNG(
         FAHRTZEIT
     )
 VALUES (3, 7, 2, 10);
+
 insert into T_FAHRPLANZUORDNUNG(
         FAHRPLANID,
         FAHRTSTRECKEID,
@@ -110,3 +114,24 @@ insert into T_FAHRPLANZUORDNUNG(
         RICHTUNG
     )
 VALUES (1, 1, '10:00:00', true);
+insert into T_FAHRPLANZUORDNUNG(
+        FAHRPLANID,
+        FAHRTSTRECKEID,
+        STARTZEITPUNKT,
+        RICHTUNG
+    )
+VALUES (1, 1, '12:00:00', false);
+insert into T_FAHRPLANZUORDNUNG(
+        FAHRPLANID,
+        FAHRTSTRECKEID,
+        STARTZEITPUNKT,
+        RICHTUNG
+    )
+VALUES (1, 1, '14:30:00', true);
+insert into T_FAHRPLANZUORDNUNG(
+        FAHRPLANID,
+        FAHRTSTRECKEID,
+        STARTZEITPUNKT,
+        RICHTUNG
+    )
+VALUES (1, 3, '09:00:00', true);

@@ -14,11 +14,13 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import de.hsw.busplaner.dtos.fahrtstrecke.FahrtstreckeInputDTO;
 import de.hsw.busplaner.dtos.fahrtstrecke.FahrtstreckeInputMitHaltestellenDTO;
 import de.hsw.busplaner.dtos.fahrtstrecke.FahrtstreckeMitHaltestellenDTO;
+import de.hsw.busplaner.dtos.fahrtstrecke.FahrtstreckeMitUhrzeitDTO;
 import de.hsw.busplaner.dtos.fahrtstrecke.FahrtstreckeOutputDTO;
 import de.hsw.busplaner.dtos.haltestellenzuordnung.HaltestellenzuordnungInputDTO;
 import de.hsw.busplaner.dtos.haltestellenzuordnung.HaltestellenzuordnungOhneNaechsteHaltestelleInputDTO;
@@ -101,6 +103,23 @@ public class FahrtstreckeController {
             log.warning("Fehler beim Sortieren der Haltestellen");
         }
         return ResponseEntity.ok(alleFahrten);
+    }
+
+    @GetMapping(path = "/uhrzeit")
+    public ResponseEntity<ArrayList<FahrtstreckeMitUhrzeitDTO>> getAlleFahrtenZuBuslinieUndHaltestelleMitUhrzeit(
+            @RequestParam Long buslinieId, @RequestParam Long haltestelleId) {
+        ArrayList<FahrtstreckeMitUhrzeitDTO> fahrtstreckenMitUhrzeit = new ArrayList<>();
+        try {
+            fahrtstreckenMitUhrzeit.addAll(service.ermittleFahrtstreckenMitUhrzeit(buslinieId, haltestelleId));
+        } catch (InstanceNotFoundException e) {
+            log.warning("Eine Instanz wurde nicht gefunden");
+        } catch (IllegalArgumentException e) {
+            log.warning("Zu einer ID konnte nichts gefunden werden");
+        }
+        if (fahrtstreckenMitUhrzeit.isEmpty()) {
+            log.warning("Es wurden keine Fahrtstrecken gefunden");
+        }
+        return ResponseEntity.ok(fahrtstreckenMitUhrzeit);
     }
 
     @GetMapping(path = "")
