@@ -96,7 +96,8 @@ public class HaltestelleService extends BasicService<Haltestelle, Long> {
             throws InstanceNotFoundException {
         List<Haltestellenzuordnung> zuordnungen = haltestellenzuordnungService
                 .getAlleZuordnungenZuFahrtstrecke(fahrtstreckeId);
-        for (HaltestellenzuordnungSortierDTO haltestellenzuordnung : sortierer.sortiereHaltestellen(zuordnungen)) {
+        for (HaltestellenzuordnungSortierDTO haltestellenzuordnung : sortierer
+                .sortiereHaltestellen(new ArrayList<>(zuordnungen))) {
             if (haltestellenzuordnung.getHaltestelleId().equals(haltestelleId)) {
                 return true;
             }

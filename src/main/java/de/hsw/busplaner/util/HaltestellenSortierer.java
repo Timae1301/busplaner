@@ -22,7 +22,7 @@ public class HaltestellenSortierer {
     HaltestelleService haltestelleService;
 
     public List<HaltestellenzuordnungSortierDTO> sortiereHaltestellen(
-            List<Haltestellenzuordnung> haltestellenzuordnungen) throws InstanceNotFoundException {
+            ArrayList<Haltestellenzuordnung> haltestellenzuordnungen) throws InstanceNotFoundException {
         List<HaltestellenzuordnungSortierDTO> sortierteHaltestellen = new ArrayList<>();
         if (haltestellenzuordnungen.isEmpty()) {
             log.info("Es wurden keine Haltestellenzuordnungen uebergeben");

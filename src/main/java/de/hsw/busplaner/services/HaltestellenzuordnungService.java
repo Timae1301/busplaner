@@ -69,7 +69,7 @@ public class HaltestellenzuordnungService extends BasicService<Haltestellenzuord
 
     public List<HaltestellenzuordnungSortierDTO> getAlleZuordnungenSorted(Long fahrtstreckeId)
             throws InstanceNotFoundException {
-        List<Haltestellenzuordnung> zuordnungen = new ArrayList<>();
+        ArrayList<Haltestellenzuordnung> zuordnungen = new ArrayList<>();
         Fahrtstrecke fahrtstrecke = fahrtstreckeService.getFahrtstreckeZuId(fahrtstreckeId);
         repository.findAllByFahrtstreckeid(fahrtstrecke).forEach(zuordnungen::add);
         return sortierer.sortiereHaltestellen(zuordnungen);

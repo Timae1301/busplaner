@@ -105,7 +105,7 @@ public class FahrtstreckeService extends BasicService<Fahrtstrecke, Long> {
         List<FahrtstreckeMitHaltestellenDTO> alleFahrtstrecken = new ArrayList<>();
         for (Fahrtstrecke fahrtstrecke : findAllByBuslinieId(buslinieService.getBuslinieById(buslinieId))) {
             alleFahrtstrecken.add(new FahrtstreckeMitHaltestellenDTO(fahrtstrecke,
-                    sortierer.sortiereHaltestellen(fahrtstrecke.getHaltestellenzuordnungen())));
+                    sortierer.sortiereHaltestellen(new ArrayList<>(fahrtstrecke.getHaltestellenzuordnungen()))));
         }
         return alleFahrtstrecken;
     }

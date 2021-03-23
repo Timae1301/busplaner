@@ -93,8 +93,8 @@ public class FahrplanService extends BasicService<Fahrplan, Long> {
 
     private FahrtstreckeMitHaltestellenDTO getFahrtstreckeMitHaltestellen(Fahrplanzuordnung fahrplanzuordnung)
             throws InstanceNotFoundException {
-        List<HaltestellenzuordnungSortierDTO> sortiertehaltestellen = sortierer
-                .sortiereHaltestellen(fahrplanzuordnung.getFahrtstreckeid().getHaltestellenzuordnungen());
+        List<HaltestellenzuordnungSortierDTO> sortiertehaltestellen = sortierer.sortiereHaltestellen(
+                new ArrayList<>(fahrplanzuordnung.getFahrtstreckeid().getHaltestellenzuordnungen()));
         if (fahrplanzuordnung.isRichtung()) {
             sortiertehaltestellen = FahrtzeitenErmitteln.setzeUhrzeiten(sortiertehaltestellen,
                     fahrplanzuordnung.getStartzeitpunkt());
