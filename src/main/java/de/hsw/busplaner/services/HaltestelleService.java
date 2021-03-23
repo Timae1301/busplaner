@@ -1,12 +1,12 @@
 package de.hsw.busplaner.services;
 
 import java.util.ArrayList;
+import java.util.List;
 import java.util.Optional;
 
 import javax.management.InstanceNotFoundException;
 
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.context.annotation.Lazy;
 import org.springframework.stereotype.Service;
 
 import de.hsw.busplaner.beans.Haltestelle;
@@ -23,17 +23,15 @@ public class HaltestelleService extends BasicService<Haltestelle, Long> {
 
     private final HaltestelleRepository repository;
 
-    private final HaltestellenzuordnungService haltestellenzuordnungService;
-
-    private final HaltestellenSortierer sortierer;
+    @Autowired
+    private HaltestellenSortierer sortierer;
 
     @Autowired
-    public HaltestelleService(final HaltestelleRepository repository,
-            @Lazy final HaltestellenzuordnungService haltestellenzuordnungService,
-            final HaltestellenSortierer sortierer) {
+    private HaltestellenzuordnungService haltestellenzuordnungService;
+
+    @Autowired
+    public HaltestelleService(final HaltestelleRepository repository) {
         this.repository = repository;
-        this.haltestellenzuordnungService = haltestellenzuordnungService;
-        this.sortierer = sortierer;
     }
 
     @Override
@@ -41,8 +39,8 @@ public class HaltestelleService extends BasicService<Haltestelle, Long> {
         return repository;
     }
 
-    public ArrayList<HaltestelleOutputDTO> getAllHaltestellen() {
-        ArrayList<HaltestelleOutputDTO> haltestellen = new ArrayList<>();
+    public List<HaltestelleOutputDTO> getAllHaltestellen() {
+        List<HaltestelleOutputDTO> haltestellen = new ArrayList<>();
         for (Haltestelle haltestelle : findAll()) {
             log.info(String.format("Haltestelle: %s gefunden", haltestelle.getId()));
             HaltestelleOutputDTO haltestelleDto = new HaltestelleOutputDTO(haltestelle);
@@ -73,7 +71,7 @@ public class HaltestelleService extends BasicService<Haltestelle, Long> {
         save(haltestelle);
     }
 
-    public Boolean deleteHaltestelle(Long haltestelleId) throws IllegalArgumentException {
+    public boolean deleteHaltestelle(Long haltestelleId) throws IllegalArgumentException {
         if (isHaltestelleLoeschbar(haltestelleId)) {
             deleteById(haltestelleId);
             return true;
@@ -81,7 +79,7 @@ public class HaltestelleService extends BasicService<Haltestelle, Long> {
         return false;
     }
 
-    private Boolean isHaltestelleLoeschbar(Long haltestelleId) {
+    private boolean isHaltestelleLoeschbar(Long haltestelleId) {
         Haltestelle haltestelle = getHaltestelleById(haltestelleId);
         if (haltestelle.getHaltestellenzuordnungen().isEmpty()) {
             for (Haltestellenzuordnung haltestellenzuordnung : haltestellenzuordnungService.findAll()) {
@@ -94,9 +92,9 @@ public class HaltestelleService extends BasicService<Haltestelle, Long> {
         return false;
     }
 
-    public Boolean isHaltestelleInFahrtstrecke(Long haltestelleId, Long fahrtstreckeId)
+    public boolean isHaltestelleInFahrtstrecke(Long haltestelleId, Long fahrtstreckeId)
             throws InstanceNotFoundException {
-        ArrayList<Haltestellenzuordnung> zuordnungen = haltestellenzuordnungService
+        List<Haltestellenzuordnung> zuordnungen = haltestellenzuordnungService
                 .getAlleZuordnungenZuFahrtstrecke(fahrtstreckeId);
         for (HaltestellenzuordnungSortierDTO haltestellenzuordnung : sortierer.sortiereHaltestellen(zuordnungen)) {
             if (haltestellenzuordnung.getHaltestelleId().equals(haltestelleId)) {

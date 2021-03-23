@@ -1,7 +1,8 @@
 package de.hsw.busplaner.controller;
 
 import java.util.ArrayList;
-import java.util.Comparator;
+import java.util.Collections;
+import java.util.List;
 
 import javax.management.InstanceNotFoundException;
 
@@ -42,9 +43,8 @@ public class BuslinieController {
     }
 
     @GetMapping(path = "/haltestelle/{haltestelleId}")
-    public ResponseEntity<ArrayList<BuslinieOutputDTO>> getAlleBuslinienFuerHaltestelle(
-            @PathVariable Long haltestelleId) {
-        ArrayList<BuslinieOutputDTO> buslinien = new ArrayList<>();
+    public ResponseEntity<List<BuslinieOutputDTO>> getAlleBuslinienFuerHaltestelle(@PathVariable Long haltestelleId) {
+        List<BuslinieOutputDTO> buslinien = new ArrayList<>();
         try {
             buslinien.addAll(service.getAlleBuslinienFuerHaltestelle(haltestelleId));
         } catch (InstanceNotFoundException e) {
@@ -55,19 +55,12 @@ public class BuslinieController {
     }
 
     @GetMapping(path = "")
-    public ResponseEntity<ArrayList<BuslinieOutputDTO>> getAllBuslinie() {
-        ArrayList<BuslinieOutputDTO> buslinien = service.getAllBuslinien();
+    public ResponseEntity<List<BuslinieOutputDTO>> getAllBuslinie() {
+        List<BuslinieOutputDTO> buslinien = service.getAllBuslinien();
         if (buslinien.isEmpty()) {
             log.warning("Es sind keine Buslinien vorhanden");
         }
-        buslinien.sort(new Comparator<BuslinieOutputDTO>() {
-
-            @Override
-            public int compare(BuslinieOutputDTO o1, BuslinieOutputDTO o2) {
-                return Long.compare(o1.getBusnr(), o2.getBusnr());
-            }
-
-        });
+        Collections.sort(buslinien);
         return ResponseEntity.ok(buslinien);
     }
 

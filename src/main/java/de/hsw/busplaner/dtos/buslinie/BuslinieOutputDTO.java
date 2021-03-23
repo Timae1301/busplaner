@@ -8,7 +8,7 @@ import lombok.NoArgsConstructor;
 @Data
 @EqualsAndHashCode(callSuper = false)
 @NoArgsConstructor
-public class BuslinieOutputDTO extends BuslinieDTO {
+public class BuslinieOutputDTO extends BuslinieDTO implements Comparable<BuslinieOutputDTO> {
 
     private Long id;
 
@@ -16,6 +16,11 @@ public class BuslinieOutputDTO extends BuslinieDTO {
 
     public BuslinieOutputDTO(Buslinie buslinie) {
         this.id = buslinie.getId();
-        setBusnr(buslinie.getBusnr());
+        super.busnr = buslinie.getBusnr();
+    }
+
+    @Override
+    public int compareTo(BuslinieOutputDTO o) {
+        return Long.compare(getBusnr(), o.getBusnr());
     }
 }

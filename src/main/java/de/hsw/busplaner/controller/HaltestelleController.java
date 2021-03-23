@@ -1,6 +1,6 @@
 package de.hsw.busplaner.controller;
 
-import java.util.ArrayList;
+import java.util.List;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.github.fge.jsonpatch.JsonPatch;
@@ -39,8 +39,8 @@ public class HaltestelleController {
     }
 
     @GetMapping(path = "")
-    public ResponseEntity<ArrayList<HaltestelleOutputDTO>> getAlleHaltestellen() {
-        ArrayList<HaltestelleOutputDTO> haltestellen = service.getAllHaltestellen();
+    public ResponseEntity<List<HaltestelleOutputDTO>> getAlleHaltestellen() {
+        List<HaltestelleOutputDTO> haltestellen = service.getAllHaltestellen();
         if (haltestellen.isEmpty()) {
             log.warning("Es sind keine Haltestellen vorhanden");
         }

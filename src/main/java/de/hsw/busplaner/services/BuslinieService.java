@@ -7,7 +7,6 @@ import java.util.Optional;
 import javax.management.InstanceNotFoundException;
 
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.context.annotation.Lazy;
 import org.springframework.stereotype.Service;
 
 import de.hsw.busplaner.beans.Buslinie;
@@ -23,16 +22,15 @@ public class BuslinieService extends BasicService<Buslinie, Long> {
 
     private final BuslinieRepository repository;
 
-    private final FahrtstreckeService fahrtstreckeService;
-
-    private final HaltestelleService haltestelleService;
+    @Autowired
+    private FahrtstreckeService fahrtstreckeService;
 
     @Autowired
-    public BuslinieService(final BuslinieRepository repository, @Lazy final FahrtstreckeService fahrtstreckeService,
-            @Lazy final HaltestelleService haltestelleService) {
+    private HaltestelleService haltestelleService;
+
+    @Autowired
+    public BuslinieService(final BuslinieRepository repository) {
         this.repository = repository;
-        this.fahrtstreckeService = fahrtstreckeService;
-        this.haltestelleService = haltestelleService;
     }
 
     @Override
@@ -49,8 +47,8 @@ public class BuslinieService extends BasicService<Buslinie, Long> {
         throw new IllegalArgumentException(String.format("Zu der BusNr %s wurde kein Eintrag gefunden", busnr));
     }
 
-    public ArrayList<BuslinieOutputDTO> getAllBuslinien() {
-        ArrayList<BuslinieOutputDTO> buslinien = new ArrayList<>();
+    public List<BuslinieOutputDTO> getAllBuslinien() {
+        List<BuslinieOutputDTO> buslinien = new ArrayList<>();
         for (Buslinie buslinie : findAll()) {
             log.info(String.format("Buslinie: %s gefunden", buslinie.getBusnr()));
             BuslinieOutputDTO buslinieDto = new BuslinieOutputDTO(buslinie);
@@ -85,14 +83,14 @@ public class BuslinieService extends BasicService<Buslinie, Long> {
         save(buslinie);
     }
 
-    private Boolean isBuslinieLoeschbar(Long buslinieId) {
+    private boolean isBuslinieLoeschbar(Long buslinieId) {
         List<Fahrtstrecke> fahrtstreckenMitBuslinie = new ArrayList<>();
         Buslinie buslinie = getBuslinieById(buslinieId);
         fahrtstreckeService.findAllByBuslinieId(buslinie).forEach(fahrtstreckenMitBuslinie::add);
         return fahrtstreckenMitBuslinie.isEmpty();
     }
 
-    public Boolean deleteBuslinie(Long buslinieId) throws IllegalArgumentException {
+    public boolean deleteBuslinie(Long buslinieId) throws IllegalArgumentException {
         boolean isBuslinieLoeschbar = isBuslinieLoeschbar(buslinieId);
         if (isBuslinieLoeschbar) {
             deleteById(buslinieId);
@@ -100,9 +98,9 @@ public class BuslinieService extends BasicService<Buslinie, Long> {
         return isBuslinieLoeschbar;
     }
 
-    public ArrayList<BuslinieOutputDTO> getAlleBuslinienFuerHaltestelle(Long haltestelleId)
+    public List<BuslinieOutputDTO> getAlleBuslinienFuerHaltestelle(Long haltestelleId)
             throws InstanceNotFoundException {
-        ArrayList<BuslinieOutputDTO> buslinien = new ArrayList<>();
+        List<BuslinieOutputDTO> buslinien = new ArrayList<>();
         for (FahrtstreckeOutputDTO fahrtstreckeOutputDTO : fahrtstreckeService.getAlleFahrtstrecken()) {
             if (haltestelleService.isHaltestelleInFahrtstrecke(haltestelleId, fahrtstreckeOutputDTO.getId())) {
                 buslinien.add(new BuslinieOutputDTO(findByBusnr(fahrtstreckeOutputDTO.getBuslinie())));

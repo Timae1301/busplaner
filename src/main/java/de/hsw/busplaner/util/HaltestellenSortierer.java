@@ -21,9 +21,9 @@ public class HaltestellenSortierer {
     @Autowired
     HaltestelleService haltestelleService;
 
-    public ArrayList<HaltestellenzuordnungSortierDTO> sortiereHaltestellen(
-            ArrayList<Haltestellenzuordnung> haltestellenzuordnungen) throws InstanceNotFoundException {
-        ArrayList<HaltestellenzuordnungSortierDTO> sortierteHaltestellen = new ArrayList<>();
+    public List<HaltestellenzuordnungSortierDTO> sortiereHaltestellen(
+            List<Haltestellenzuordnung> haltestellenzuordnungen) throws InstanceNotFoundException {
+        List<HaltestellenzuordnungSortierDTO> sortierteHaltestellen = new ArrayList<>();
         if (haltestellenzuordnungen.isEmpty()) {
             log.info("Es wurden keine Haltestellenzuordnungen uebergeben");
             return sortierteHaltestellen;
@@ -36,7 +36,7 @@ public class HaltestellenSortierer {
         sortierteHaltestellen.add(new HaltestellenzuordnungSortierDTO(naechsteHaltestelle));
         haltestellenzuordnungen.remove(naechsteHaltestelle);
 
-        while (haltestellenzuordnungen.size() > 0) {
+        while (!haltestellenzuordnungen.isEmpty()) {
             naechsteHaltestelle = getNaechsteHaltestelle(haltestellenzuordnungen,
                     naechsteHaltestelle.getNaechsteHaltestelle());
             if (naechsteHaltestelle == null) {
@@ -56,8 +56,8 @@ public class HaltestellenSortierer {
         return haltestelleService.getHaltestelleById(haltestellenId);
     }
 
-    private Haltestellenzuordnung getErsteHaltestelle(ArrayList<Haltestellenzuordnung> haltestellenzuordnungen) {
-        ArrayList<Long> naechstenHaltestellen = getNaechsteHaltestellen(haltestellenzuordnungen);
+    private Haltestellenzuordnung getErsteHaltestelle(List<Haltestellenzuordnung> haltestellenzuordnungen) {
+        List<Long> naechstenHaltestellen = getNaechsteHaltestellen(haltestellenzuordnungen);
         for (Haltestellenzuordnung haltestellenzuordnung : haltestellenzuordnungen) {
             if (!naechstenHaltestellen.contains(haltestellenzuordnung.getHaltestelleid().getId())) {
                 return haltestellenzuordnung;
@@ -66,15 +66,15 @@ public class HaltestellenSortierer {
         return null;
     }
 
-    private ArrayList<Long> getNaechsteHaltestellen(ArrayList<Haltestellenzuordnung> haltestellenzuordnungen) {
-        ArrayList<Long> naechstenHaltestellen = new ArrayList<>();
+    private List<Long> getNaechsteHaltestellen(List<Haltestellenzuordnung> haltestellenzuordnungen) {
+        List<Long> naechstenHaltestellen = new ArrayList<>();
         for (Haltestellenzuordnung haltestellenzuordnung : haltestellenzuordnungen) {
             naechstenHaltestellen.add(haltestellenzuordnung.getNaechsteHaltestelle());
         }
         return naechstenHaltestellen;
     }
 
-    private Haltestellenzuordnung getNaechsteHaltestelle(ArrayList<Haltestellenzuordnung> haltestellenzuordnungen,
+    private Haltestellenzuordnung getNaechsteHaltestelle(List<Haltestellenzuordnung> haltestellenzuordnungen,
             Long naechsteHaltestelle) {
         for (Haltestellenzuordnung haltestellenzuordnung : haltestellenzuordnungen) {
             if (haltestellenzuordnung.getHaltestelleid().getId().equals(naechsteHaltestelle)) {
@@ -83,12 +83,4 @@ public class HaltestellenSortierer {
         }
         return null;
     }
-
-    public ArrayList<HaltestellenzuordnungSortierDTO> sortiereHaltestellen(
-            List<Haltestellenzuordnung> haltestellenzuordnungen) throws InstanceNotFoundException {
-        ArrayList<Haltestellenzuordnung> arrayListHaltestellenzuordnungen = new ArrayList<>();
-        arrayListHaltestellenzuordnungen.addAll(haltestellenzuordnungen);
-        return sortiereHaltestellen(arrayListHaltestellenzuordnungen);
-    }
-
 }

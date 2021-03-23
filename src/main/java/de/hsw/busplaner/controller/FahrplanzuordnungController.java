@@ -1,6 +1,6 @@
 package de.hsw.busplaner.controller;
 
-import java.util.ArrayList;
+import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
@@ -39,9 +39,8 @@ public class FahrplanzuordnungController {
     }
 
     @GetMapping(path = "")
-    public ResponseEntity<ArrayList<FahrplanzuordnungOutputDTO>> getAlleFahrplanzuordnungen() {
-        ArrayList<FahrplanzuordnungOutputDTO> zuordnungen = new ArrayList<>();
-        zuordnungen = service.getAlleFahrplanzuordnungen();
+    public ResponseEntity<List<FahrplanzuordnungOutputDTO>> getAlleFahrplanzuordnungen() {
+        List<FahrplanzuordnungOutputDTO> zuordnungen = service.getAlleFahrplanzuordnungen();
         if (zuordnungen.isEmpty()) {
             log.warning("Es sind keine Fahrplanzuordnungen vorhanden");
         }

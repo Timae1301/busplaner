@@ -99,9 +99,9 @@ public class FahrtstreckeController {
     }
 
     @GetMapping(path = "/buslinie/{buslinieId}")
-    public ResponseEntity<ArrayList<FahrtstreckeMitHaltestellenDTO>> getAlleFahrtenZuBuslinie(
+    public ResponseEntity<List<FahrtstreckeMitHaltestellenDTO>> getAlleFahrtenZuBuslinie(
             @PathVariable Long buslinieId) {
-        ArrayList<FahrtstreckeMitHaltestellenDTO> alleFahrten = new ArrayList<>();
+        List<FahrtstreckeMitHaltestellenDTO> alleFahrten = new ArrayList<>();
         try {
             alleFahrten.addAll(service.getAlleFahrtstreckenZuBuslinieId(buslinieId));
         } catch (InstanceNotFoundException e) {
@@ -111,9 +111,9 @@ public class FahrtstreckeController {
     }
 
     @GetMapping(path = "/uhrzeit")
-    public ResponseEntity<ArrayList<FahrtstreckeMitUhrzeitDTO>> getAlleFahrtenZuBuslinieUndHaltestelleMitUhrzeit(
+    public ResponseEntity<List<FahrtstreckeMitUhrzeitDTO>> getAlleFahrtenZuBuslinieUndHaltestelleMitUhrzeit(
             @RequestParam Long buslinieId, @RequestParam Long haltestelleId) {
-        ArrayList<FahrtstreckeMitUhrzeitDTO> fahrtstreckenMitUhrzeit = new ArrayList<>();
+        List<FahrtstreckeMitUhrzeitDTO> fahrtstreckenMitUhrzeit = new ArrayList<>();
         try {
             fahrtstreckenMitUhrzeit.addAll(service.ermittleFahrtstreckenMitUhrzeit(buslinieId, haltestelleId));
         } catch (InstanceNotFoundException e) {
@@ -128,9 +128,8 @@ public class FahrtstreckeController {
     }
 
     @GetMapping(path = "")
-    public ResponseEntity<ArrayList<FahrtstreckeOutputDTO>> getAlleFahrtstrecken() {
-        ArrayList<FahrtstreckeOutputDTO> fahrtstrecken = new ArrayList<>();
-        fahrtstrecken = service.getAlleFahrtstrecken();
+    public ResponseEntity<List<FahrtstreckeOutputDTO>> getAlleFahrtstrecken() {
+        List<FahrtstreckeOutputDTO> fahrtstrecken = service.getAlleFahrtstrecken();
         if (fahrtstrecken.isEmpty()) {
             log.warning("Es sind keine Fahrtstrecken vorhanden");
         }

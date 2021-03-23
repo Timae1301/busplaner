@@ -1,7 +1,7 @@
 package de.hsw.busplaner.dtos.fahrtstrecke;
 
 import java.time.LocalTime;
-import java.util.ArrayList;
+import java.util.List;
 
 import de.hsw.busplaner.beans.Fahrtstrecke;
 import de.hsw.busplaner.dtos.haltestellenzuordnung.HaltestellenzuordnungSortierDTO;
@@ -20,10 +20,10 @@ public class FahrtstreckeMitHaltestellenDTO implements Comparable<FahrtstreckeMi
 
     String starthaltestelle;
 
-    ArrayList<HaltestellenzuordnungSortierDTO> haltestellen;
+    List<HaltestellenzuordnungSortierDTO> haltestellen;
 
     public FahrtstreckeMitHaltestellenDTO(Fahrtstrecke fahrtstrecke,
-            ArrayList<HaltestellenzuordnungSortierDTO> haltestellen) {
+            List<HaltestellenzuordnungSortierDTO> haltestellen) {
         this.fahrtstreckeId = fahrtstrecke.getId();
         this.fahrtstreckeName = fahrtstrecke.getName();
         this.haltestellen = haltestellen;
@@ -31,13 +31,14 @@ public class FahrtstreckeMitHaltestellenDTO implements Comparable<FahrtstreckeMi
             this.startzeitpunkt = haltestellen.get(0).getUhrzeit();
             this.starthaltestelle = haltestellen.get(0).getHaltestellenName();
         }
-
     }
 
     @Override
     public int compareTo(FahrtstreckeMitHaltestellenDTO o) {
-        if (getStartzeitpunkt() == null || o.getStartzeitpunkt() == null)
-            return 0;
+        if (getStartzeitpunkt() == null)
+            return -1;
+        if (o.getStartzeitpunkt() == null)
+            return 1;
         return getStartzeitpunkt().compareTo(o.getStartzeitpunkt());
     }
 }

@@ -2,12 +2,12 @@ package de.hsw.busplaner.services;
 
 import java.time.LocalTime;
 import java.util.ArrayList;
+import java.util.List;
 import java.util.Optional;
 
 import javax.management.InstanceNotFoundException;
 
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.context.annotation.Lazy;
 import org.springframework.stereotype.Service;
 
 import de.hsw.busplaner.beans.Buslinie;
@@ -28,24 +28,21 @@ public class FahrtstreckeService extends BasicService<Fahrtstrecke, Long> {
 
     private final FahrtstreckeRepository repository;
 
-    private final BuslinieService buslinieService;
-
-    private final FahrplanzuordnungService fahrplanzuordnungService;
-
-    private final HaltestellenzuordnungService haltestellenzuordnungService;
-
-    private final HaltestellenSortierer sortierer;
+    @Autowired
+    private BuslinieService buslinieService;
 
     @Autowired
-    public FahrtstreckeService(final FahrtstreckeRepository repository, @Lazy final BuslinieService buslinieService,
-            @Lazy final FahrplanzuordnungService fahrplanzuordnungService,
-            @Lazy final HaltestellenzuordnungService haltestellenzuordnungService,
-            final HaltestellenSortierer sortierer) {
+    private FahrplanzuordnungService fahrplanzuordnungService;
+
+    @Autowired
+    private HaltestellenzuordnungService haltestellenzuordnungService;
+
+    @Autowired
+    private HaltestellenSortierer sortierer;
+
+    @Autowired
+    public FahrtstreckeService(final FahrtstreckeRepository repository) {
         this.repository = repository;
-        this.buslinieService = buslinieService;
-        this.fahrplanzuordnungService = fahrplanzuordnungService;
-        this.haltestellenzuordnungService = haltestellenzuordnungService;
-        this.sortierer = sortierer;
     }
 
     @Override
@@ -64,8 +61,8 @@ public class FahrtstreckeService extends BasicService<Fahrtstrecke, Long> {
         return fahrtstrecke.getId();
     }
 
-    public ArrayList<FahrtstreckeOutputDTO> getAlleFahrtstrecken() {
-        ArrayList<FahrtstreckeOutputDTO> fahrtstrecken = new ArrayList<>();
+    public List<FahrtstreckeOutputDTO> getAlleFahrtstrecken() {
+        List<FahrtstreckeOutputDTO> fahrtstrecken = new ArrayList<>();
         for (Fahrtstrecke fahrtstrecke : findAll()) {
             FahrtstreckeOutputDTO fahrtstreckeDto = new FahrtstreckeOutputDTO(fahrtstrecke);
             if (isFahrtstreckeLoeschbar(fahrtstrecke)) {
@@ -84,13 +81,13 @@ public class FahrtstreckeService extends BasicService<Fahrtstrecke, Long> {
         return fahrtstreckeOpt.get();
     }
 
-    private Boolean isFahrtstreckeLoeschbar(Fahrtstrecke fahrtstreckeId) {
-        ArrayList<Fahrplanzuordnung> fahrplanzuordnungen = fahrplanzuordnungService
+    private boolean isFahrtstreckeLoeschbar(Fahrtstrecke fahrtstreckeId) {
+        List<Fahrplanzuordnung> fahrplanzuordnungen = fahrplanzuordnungService
                 .getAlleFahrplanzuordnungenZuFahrtstreckeId(fahrtstreckeId);
         return fahrplanzuordnungen.isEmpty();
     }
 
-    public Boolean deleteFahrtstrecke(Long fahrtstreckeId) {
+    public boolean deleteFahrtstrecke(Long fahrtstreckeId) {
         Fahrtstrecke fahrtstrecke = getFahrtstreckeZuId(fahrtstreckeId);
         if (isFahrtstreckeLoeschbar(fahrtstrecke)) {
             for (HaltestellenzuordnungOutputDTO zuordnung : haltestellenzuordnungService
@@ -103,9 +100,9 @@ public class FahrtstreckeService extends BasicService<Fahrtstrecke, Long> {
         return false;
     }
 
-    public ArrayList<FahrtstreckeMitHaltestellenDTO> getAlleFahrtstreckenZuBuslinieId(Long buslinieId)
+    public List<FahrtstreckeMitHaltestellenDTO> getAlleFahrtstreckenZuBuslinieId(Long buslinieId)
             throws InstanceNotFoundException, IllegalArgumentException {
-        ArrayList<FahrtstreckeMitHaltestellenDTO> alleFahrtstrecken = new ArrayList<>();
+        List<FahrtstreckeMitHaltestellenDTO> alleFahrtstrecken = new ArrayList<>();
         for (Fahrtstrecke fahrtstrecke : findAllByBuslinieId(buslinieService.getBuslinieById(buslinieId))) {
             alleFahrtstrecken.add(new FahrtstreckeMitHaltestellenDTO(fahrtstrecke,
                     sortierer.sortiereHaltestellen(fahrtstrecke.getHaltestellenzuordnungen())));
@@ -113,10 +110,9 @@ public class FahrtstreckeService extends BasicService<Fahrtstrecke, Long> {
         return alleFahrtstrecken;
     }
 
-    public ArrayList<FahrtstreckeMitUhrzeitDTO> ermittleFahrtstreckenMitUhrzeit(Long buslinieId, Long haltestelleId)
+    public List<FahrtstreckeMitUhrzeitDTO> ermittleFahrtstreckenMitUhrzeit(Long buslinieId, Long haltestelleId)
             throws InstanceNotFoundException, IllegalArgumentException {
-        ArrayList<FahrtstreckeMitUhrzeitDTO> fahrtstreckenMitUhrzeit = new ArrayList<>();
-
+        List<FahrtstreckeMitUhrzeitDTO> fahrtstreckenMitUhrzeit = new ArrayList<>();
         for (FahrtstreckeMitHaltestellenDTO fahrtstreckeMitHaltestellenDTO : getFahrtstreckenMitBuslinieUndHaltestelle(
                 buslinieId, haltestelleId)) {
             for (Fahrplanzuordnung fahrplanzuordnung : fahrplanzuordnungService
@@ -152,9 +148,9 @@ public class FahrtstreckeService extends BasicService<Fahrtstrecke, Long> {
         return fahrplanzuordnung.getStartzeitpunkt().plusMinutes(fahrtzeit);
     }
 
-    private ArrayList<FahrtstreckeMitHaltestellenDTO> getFahrtstreckenMitBuslinieUndHaltestelle(Long buslinieId,
+    private List<FahrtstreckeMitHaltestellenDTO> getFahrtstreckenMitBuslinieUndHaltestelle(Long buslinieId,
             Long haltestelleId) throws InstanceNotFoundException, IllegalArgumentException {
-        ArrayList<FahrtstreckeMitHaltestellenDTO> fahrtstreckenMithaltestellen = new ArrayList<>();
+        List<FahrtstreckeMitHaltestellenDTO> fahrtstreckenMithaltestellen = new ArrayList<>();
         for (FahrtstreckeMitHaltestellenDTO fahrtstrecke : getAlleFahrtstreckenZuBuslinieId(buslinieId)) {
             if (isHaltestelleInFahrt(fahrtstrecke, haltestelleId)) {
                 fahrtstreckenMithaltestellen.add(fahrtstrecke);
