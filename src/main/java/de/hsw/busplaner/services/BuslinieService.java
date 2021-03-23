@@ -7,6 +7,7 @@ import java.util.Optional;
 import javax.management.InstanceNotFoundException;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.annotation.Lazy;
 import org.springframework.stereotype.Service;
 
 import de.hsw.busplaner.beans.Buslinie;
@@ -20,14 +21,19 @@ import lombok.extern.java.Log;
 @Log
 public class BuslinieService extends BasicService<Buslinie, Long> {
 
-    @Autowired
-    private BuslinieRepository repository;
+    private final BuslinieRepository repository;
+
+    private final FahrtstreckeService fahrtstreckeService;
+
+    private final HaltestelleService haltestelleService;
 
     @Autowired
-    private FahrtstreckeService fahrtstreckeService;
-
-    @Autowired
-    private HaltestelleService haltestelleService;
+    public BuslinieService(final BuslinieRepository repository, @Lazy final FahrtstreckeService fahrtstreckeService,
+            @Lazy final HaltestelleService haltestelleService) {
+        this.repository = repository;
+        this.fahrtstreckeService = fahrtstreckeService;
+        this.haltestelleService = haltestelleService;
+    }
 
     @Override
     protected BuslinieRepository getRepository() {

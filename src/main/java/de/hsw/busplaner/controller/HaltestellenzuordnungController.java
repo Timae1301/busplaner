@@ -27,8 +27,12 @@ import lombok.extern.java.Log;
 @RequestMapping(path = "/api/haltestellenzuordnung")
 public class HaltestellenzuordnungController {
 
+    private final HaltestellenzuordnungService service;
+
     @Autowired
-    HaltestellenzuordnungService service;
+    public HaltestellenzuordnungController(final HaltestellenzuordnungService service) {
+        this.service = service;
+    }
 
     @PostMapping(path = "")
     public ResponseEntity<ArrayList<Long>> postZuordnungen(

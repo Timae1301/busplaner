@@ -4,6 +4,7 @@ import java.time.LocalTime;
 import java.util.ArrayList;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.annotation.Lazy;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.web.server.ResponseStatusException;
@@ -20,14 +21,19 @@ import lombok.extern.java.Log;
 @Service
 public class FahrplanzuordnungService extends BasicService<Fahrplanzuordnung, Long> {
 
-    @Autowired
-    FahrplanzuordnungRepository repository;
+    private final FahrplanzuordnungRepository repository;
+
+    private final FahrtstreckeService fahrtstreckeService;
+
+    private final FahrplanService fahrplanService;
 
     @Autowired
-    FahrtstreckeService fahrtstreckeService;
-
-    @Autowired
-    FahrplanService fahrplanService;
+    public FahrplanzuordnungService(final FahrplanzuordnungRepository repository,
+            @Lazy final FahrtstreckeService fahrtstreckeService, @Lazy final FahrplanService fahrplanService) {
+        this.repository = repository;
+        this.fahrtstreckeService = fahrtstreckeService;
+        this.fahrplanService = fahrplanService;
+    }
 
     @Override
     protected FahrplanzuordnungRepository getRepository() {

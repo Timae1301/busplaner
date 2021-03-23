@@ -6,6 +6,7 @@ import java.util.Optional;
 import javax.management.InstanceNotFoundException;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.annotation.Lazy;
 import org.springframework.stereotype.Service;
 
 import de.hsw.busplaner.beans.Haltestelle;
@@ -20,14 +21,20 @@ import lombok.extern.java.Log;
 @Service
 public class HaltestelleService extends BasicService<Haltestelle, Long> {
 
-    @Autowired
-    private HaltestelleRepository repository;
+    private final HaltestelleRepository repository;
+
+    private final HaltestellenzuordnungService haltestellenzuordnungService;
+
+    private final HaltestellenSortierer sortierer;
 
     @Autowired
-    private HaltestellenzuordnungService haltestellenzuordnungService;
-
-    @Autowired
-    private HaltestellenSortierer sortierer;
+    public HaltestelleService(final HaltestelleRepository repository,
+            @Lazy final HaltestellenzuordnungService haltestellenzuordnungService,
+            final HaltestellenSortierer sortierer) {
+        this.repository = repository;
+        this.haltestellenzuordnungService = haltestellenzuordnungService;
+        this.sortierer = sortierer;
+    }
 
     @Override
     protected HaltestelleRepository getRepository() {

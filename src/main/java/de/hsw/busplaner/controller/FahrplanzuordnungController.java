@@ -22,8 +22,12 @@ import lombok.extern.java.Log;
 @RequestMapping(path = "/api/fahrplanzuordnung")
 public class FahrplanzuordnungController {
 
+    private final FahrplanzuordnungService service;
+
     @Autowired
-    FahrplanzuordnungService service;
+    public FahrplanzuordnungController(final FahrplanzuordnungService service) {
+        this.service = service;
+    }
 
     @PostMapping(path = "")
     public ResponseEntity<Long> postFahrplanzuordnung(@RequestBody FahrplanzuordnungInputDTO zuordung) {

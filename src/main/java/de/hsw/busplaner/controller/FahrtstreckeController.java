@@ -33,11 +33,16 @@ import lombok.extern.java.Log;
 @RequestMapping(path = "/api/fahrtstrecke")
 public class FahrtstreckeController {
 
-    @Autowired
-    FahrtstreckeService service;
+    private final FahrtstreckeService service;
+
+    private final HaltestellenzuordnungController haltestellenzuordnungController;
 
     @Autowired
-    HaltestellenzuordnungController haltestellenzuordnungController;
+    public FahrtstreckeController(final FahrtstreckeService service,
+            final HaltestellenzuordnungController haltestellenzuordnungController) {
+        this.service = service;
+        this.haltestellenzuordnungController = haltestellenzuordnungController;
+    }
 
     @PostMapping(path = "")
     public ResponseEntity<Long> postFahrtstrecke(@RequestBody FahrtstreckeInputDTO fahrtstreckeInputDTO) {

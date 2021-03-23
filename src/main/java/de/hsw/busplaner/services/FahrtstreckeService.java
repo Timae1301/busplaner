@@ -7,6 +7,7 @@ import java.util.Optional;
 import javax.management.InstanceNotFoundException;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.annotation.Lazy;
 import org.springframework.stereotype.Service;
 
 import de.hsw.busplaner.beans.Buslinie;
@@ -25,20 +26,27 @@ import de.hsw.busplaner.util.HaltestellenSortierer;
 @Service
 public class FahrtstreckeService extends BasicService<Fahrtstrecke, Long> {
 
-    @Autowired
-    FahrtstreckeRepository repository;
+    private final FahrtstreckeRepository repository;
+
+    private final BuslinieService buslinieService;
+
+    private final FahrplanzuordnungService fahrplanzuordnungService;
+
+    private final HaltestellenzuordnungService haltestellenzuordnungService;
+
+    private final HaltestellenSortierer sortierer;
 
     @Autowired
-    BuslinieService buslinieService;
-
-    @Autowired
-    FahrplanzuordnungService fahrplanzuordnungService;
-
-    @Autowired
-    HaltestellenzuordnungService haltestellenzuordnungService;
-
-    @Autowired
-    HaltestellenSortierer sortierer;
+    public FahrtstreckeService(final FahrtstreckeRepository repository, @Lazy final BuslinieService buslinieService,
+            @Lazy final FahrplanzuordnungService fahrplanzuordnungService,
+            @Lazy final HaltestellenzuordnungService haltestellenzuordnungService,
+            final HaltestellenSortierer sortierer) {
+        this.repository = repository;
+        this.buslinieService = buslinieService;
+        this.fahrplanzuordnungService = fahrplanzuordnungService;
+        this.haltestellenzuordnungService = haltestellenzuordnungService;
+        this.sortierer = sortierer;
+    }
 
     @Override
     protected FahrtstreckeRepository getRepository() {

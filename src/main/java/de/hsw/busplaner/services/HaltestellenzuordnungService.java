@@ -5,6 +5,7 @@ import java.util.ArrayList;
 import javax.management.InstanceNotFoundException;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.annotation.Lazy;
 import org.springframework.stereotype.Service;
 
 import de.hsw.busplaner.beans.Fahrtstrecke;
@@ -21,17 +22,23 @@ import lombok.extern.java.Log;
 @Service
 public class HaltestellenzuordnungService extends BasicService<Haltestellenzuordnung, Long> {
 
-    @Autowired
-    HaltestellenzuordnungRepository repository;
+    private final HaltestellenzuordnungRepository repository;
+
+    private final FahrtstreckeService fahrtstreckeService;
+
+    private final HaltestelleService haltestelleService;
+
+    private final HaltestellenSortierer sortierer;
 
     @Autowired
-    FahrtstreckeService fahrtstreckeService;
-
-    @Autowired
-    HaltestelleService haltestelleService;
-
-    @Autowired
-    HaltestellenSortierer haltestellenSortierer;
+    public HaltestellenzuordnungService(final HaltestellenzuordnungRepository repository,
+            @Lazy final FahrtstreckeService fahrtstreckeService, @Lazy final HaltestelleService haltestelleService,
+            final HaltestellenSortierer sortierer) {
+        this.repository = repository;
+        this.fahrtstreckeService = fahrtstreckeService;
+        this.haltestelleService = haltestelleService;
+        this.sortierer = sortierer;
+    }
 
     @Override
     protected HaltestellenzuordnungRepository getRepository() {
@@ -67,7 +74,7 @@ public class HaltestellenzuordnungService extends BasicService<Haltestellenzuord
         ArrayList<Haltestellenzuordnung> zuordnungen = new ArrayList<>();
         Fahrtstrecke fahrtstrecke = fahrtstreckeService.getFahrtstreckeZuId(fahrtstreckeId);
         repository.findAllByFahrtstreckeid(fahrtstrecke).forEach(zuordnungen::add);
-        return haltestellenSortierer.sortiereHaltestellen(zuordnungen);
+        return sortierer.sortiereHaltestellen(zuordnungen);
     }
 
     public ArrayList<HaltestellenzuordnungOutputDTO> getAlleZuordnungenDTOsZuFahrtstrecke(Long fahrtstreckeId) {

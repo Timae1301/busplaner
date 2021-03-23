@@ -27,8 +27,12 @@ import lombok.extern.java.Log;
 @RequestMapping(path = "/api/fahrplan")
 public class FahrplanController {
 
+    private final FahrplanService service;
+
     @Autowired
-    FahrplanService service;
+    public FahrplanController(final FahrplanService service) {
+        this.service = service;
+    }
 
     @PostMapping(path = "")
     public ResponseEntity<Long> postFahrplan(@RequestParam String name) {

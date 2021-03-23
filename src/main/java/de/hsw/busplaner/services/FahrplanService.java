@@ -8,6 +8,7 @@ import java.util.Optional;
 import javax.management.InstanceNotFoundException;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.annotation.Lazy;
 import org.springframework.stereotype.Service;
 
 import de.hsw.busplaner.beans.Fahrplan;
@@ -25,14 +26,19 @@ import lombok.extern.java.Log;
 @Service
 public class FahrplanService extends BasicService<Fahrplan, Long> {
 
-    @Autowired
-    FahrplanRepository repository;
+    private final FahrplanRepository repository;
+
+    private final FahrplanzuordnungService fahrplanzuordnungService;
+
+    private final HaltestellenSortierer sortierer;
 
     @Autowired
-    FahrplanzuordnungService fahrplanzuordnungService;
-
-    @Autowired
-    HaltestellenSortierer sortierer;
+    public FahrplanService(final FahrplanRepository repository,
+            @Lazy final FahrplanzuordnungService fahrplanzuordnungService, final HaltestellenSortierer sortierer) {
+        this.repository = repository;
+        this.fahrplanzuordnungService = fahrplanzuordnungService;
+        this.sortierer = sortierer;
+    }
 
     @Override
     protected FahrplanRepository getRepository() {
