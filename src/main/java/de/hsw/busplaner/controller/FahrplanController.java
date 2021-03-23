@@ -1,6 +1,9 @@
 package de.hsw.busplaner.controller;
 
+import java.time.LocalTime;
 import java.util.ArrayList;
+
+import javax.management.InstanceNotFoundException;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
@@ -14,6 +17,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import de.hsw.busplaner.dtos.fahrplan.FahrplanOutputDTO;
+import de.hsw.busplaner.dtos.fahrplan.FahrplanauskunftDTO;
 import de.hsw.busplaner.services.FahrplanService;
 import lombok.extern.java.Log;
 
@@ -44,5 +48,17 @@ public class FahrplanController {
     public ResponseEntity<Boolean> deleteFahrplan(@PathVariable Long fahrplanId) {
         service.deleteFahrplan(fahrplanId);
         return ResponseEntity.ok(true);
+    }
+
+    @GetMapping(path = "/auskunft/{fahrplanId}")
+    public ResponseEntity<FahrplanauskunftDTO> getFahrplanauskunft(@PathVariable Long fahrplanId,
+            @RequestParam LocalTime zeitpunktVorher, @RequestParam LocalTime zeitpunktNachher) {
+        try {
+            FahrplanauskunftDTO fahrplanauskunft = service.getFahrplanaukunft(fahrplanId, zeitpunktVorher,
+                    zeitpunktNachher);
+            return ResponseEntity.ok(fahrplanauskunft);
+        } catch (InstanceNotFoundException e) {
+            return ResponseEntity.notFound().build();
+        }
     }
 }

@@ -7,6 +7,6 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 public abstract class FahrplanDTO {
 
-    private String name;
+    String name;
 
 }

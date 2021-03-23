@@ -1,5 +1,6 @@
 package de.hsw.busplaner.services;
 
+import java.time.LocalTime;
 import java.util.ArrayList;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -76,6 +77,14 @@ public class FahrplanzuordnungService extends BasicService<Fahrplanzuordnung, Lo
     public ArrayList<Fahrplanzuordnung> getAlleFahrplanzuordnungenZuFahrtstreckeId(Fahrtstrecke fahrtstreckeId) {
         ArrayList<Fahrplanzuordnung> zuordnungen = new ArrayList<>();
         repository.findAllByFahrtstreckeid(fahrtstreckeId).forEach(zuordnungen::add);
+        return zuordnungen;
+    }
+
+    public ArrayList<Fahrplanzuordnung> getAlleFahrplanzuordnungenZuFahrplanIdInTime(Fahrplan fahrplanId,
+            LocalTime zeitpunktVorher, LocalTime zeitpunktNachher) {
+        ArrayList<Fahrplanzuordnung> zuordnungen = new ArrayList<>();
+        repository.findAllByFahrplanidAndStartzeitpunktBetween(fahrplanId, zeitpunktVorher, zeitpunktNachher)
+                .forEach(zuordnungen::add);
         return zuordnungen;
     }
 }

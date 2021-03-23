@@ -135,10 +135,11 @@ public class FahrtstreckeService extends BasicService<Fahrtstrecke, Long> {
             FahrtstreckeMitHaltestellenDTO fahrtstreckeMitHaltestellenDTO) {
         int fahrtzeit = 0;
         if (fahrplanzuordnung.isRichtung()) {
-            fahrtzeit = FahrtzeitenErmitteln.ermittleFahrtzeitInMinuten(fahrtstreckeMitHaltestellenDTO, haltestelleId);
+            fahrtzeit = FahrtzeitenErmitteln
+                    .ermittleFahrtzeitInMinuten(fahrtstreckeMitHaltestellenDTO.getHaltestellen(), haltestelleId);
         } else {
-            fahrtzeit = FahrtzeitenErmitteln.ermittleFahrtzeitInMinutenInvertiert(fahrtstreckeMitHaltestellenDTO,
-                    haltestelleId);
+            fahrtzeit = FahrtzeitenErmitteln.ermittleFahrtzeitInMinutenInvertiert(
+                    fahrtstreckeMitHaltestellenDTO.getHaltestellen(), haltestelleId);
         }
         return fahrplanzuordnung.getStartzeitpunkt().plusMinutes(fahrtzeit);
     }
@@ -162,5 +163,4 @@ public class FahrtstreckeService extends BasicService<Fahrtstrecke, Long> {
         }
         return false;
     }
-
 }

@@ -21,10 +21,9 @@ public class FahrplanOutputDTO extends FahrplanDTO {
 
     public FahrplanOutputDTO(Fahrplan fahrplan) {
         this.id = fahrplan.getId();
-        super.setName(fahrplan.getName());
+        super.name = fahrplan.getName();
         for (Fahrplanzuordnung fahrplanzuordnung : fahrplan.getFahrplanzuordnungen()) {
             getFahrplanzuordnungen().add(new FahrplanzuordnungOutputFahrplanDTO(fahrplanzuordnung));
         }
-
     }
 }

@@ -1,5 +1,7 @@
 package de.hsw.busplaner.repositories;
 
+import java.time.LocalTime;
+
 import org.springframework.data.repository.CrudRepository;
 import org.springframework.stereotype.Repository;
 
@@ -12,4 +14,7 @@ public interface FahrplanzuordnungRepository extends CrudRepository<Fahrplanzuor
     Iterable<Fahrplanzuordnung> findAllByFahrplanid(Fahrplan fahrplanId);
 
     Iterable<Fahrplanzuordnung> findAllByFahrtstreckeid(Fahrtstrecke fahrtstreckeId);
+
+    Iterable<Fahrplanzuordnung> findAllByFahrplanidAndStartzeitpunktBetween(Fahrplan fahrplanId,
+            LocalTime zeitpunktVorher, LocalTime zeitpunktNachher);
 }
