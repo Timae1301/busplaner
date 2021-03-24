@@ -3,12 +3,12 @@ package de.hsw.busplaner.services;
 import java.time.LocalTime;
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.List;
 import java.util.Optional;
 
 import javax.management.InstanceNotFoundException;
 
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.context.annotation.Lazy;
 import org.springframework.stereotype.Service;
 
 import de.hsw.busplaner.beans.Fahrplan;
@@ -28,16 +28,15 @@ public class FahrplanService extends BasicService<Fahrplan, Long> {
 
     private final FahrplanRepository repository;
 
-    private final FahrplanzuordnungService fahrplanzuordnungService;
-
-    private final HaltestellenSortierer sortierer;
+    @Autowired
+    private HaltestellenSortierer sortierer;
 
     @Autowired
-    public FahrplanService(final FahrplanRepository repository,
-            @Lazy final FahrplanzuordnungService fahrplanzuordnungService, final HaltestellenSortierer sortierer) {
+    private FahrplanzuordnungService fahrplanzuordnungService;
+
+    @Autowired
+    public FahrplanService(final FahrplanRepository repository) {
         this.repository = repository;
-        this.fahrplanzuordnungService = fahrplanzuordnungService;
-        this.sortierer = sortierer;
     }
 
     @Override
@@ -51,8 +50,8 @@ public class FahrplanService extends BasicService<Fahrplan, Long> {
         return save(fahrplan).getId();
     }
 
-    public ArrayList<FahrplanOutputDTO> getAlleFahrplaene() {
-        ArrayList<FahrplanOutputDTO> fahrplaene = new ArrayList<>();
+    public List<FahrplanOutputDTO> getAlleFahrplaene() {
+        List<FahrplanOutputDTO> fahrplaene = new ArrayList<>();
         for (Fahrplan fahrplan : findAll()) {
             log.info(String.format("Fahrplan: %s gefunden", fahrplan.getName()));
             fahrplaene.add(new FahrplanOutputDTO(fahrplan));
@@ -68,9 +67,9 @@ public class FahrplanService extends BasicService<Fahrplan, Long> {
         return fahrplanOpt.get();
     }
 
-    public Boolean deleteFahrplan(Long fahrplanId) {
+    public boolean deleteFahrplan(Long fahrplanId) {
         Fahrplan fahrplan = getFahrplanZuId(fahrplanId);
-        ArrayList<Fahrplanzuordnung> fahrplanzuordnungen = fahrplanzuordnungService
+        List<Fahrplanzuordnung> fahrplanzuordnungen = fahrplanzuordnungService
                 .getAlleFahrplanzuordnungenZuFahrplanId(fahrplan);
         for (Fahrplanzuordnung fahrplanzuordnung : fahrplanzuordnungen) {
             fahrplanzuordnungService.deleteById(fahrplanzuordnung.getId());
@@ -79,11 +78,11 @@ public class FahrplanService extends BasicService<Fahrplan, Long> {
         return true;
     }
 
-    public FahrplanauskunftDTO getFahrplanaukunft(Long fahrplanId, LocalTime zeitpunktVorher,
+    public FahrplanauskunftDTO getFahrplanauskunft(Long fahrplanId, LocalTime zeitpunktVorher,
             LocalTime zeitpunktNachher) throws InstanceNotFoundException {
         Fahrplan fahrplan = getFahrplanZuId(fahrplanId);
-        ArrayList<FahrtstreckeMitHaltestellenDTO> fahrtstrecken = new ArrayList<>();
-        ArrayList<Fahrplanzuordnung> fahrplanzuordnungen = fahrplanzuordnungService
+        List<FahrtstreckeMitHaltestellenDTO> fahrtstrecken = new ArrayList<>();
+        List<Fahrplanzuordnung> fahrplanzuordnungen = fahrplanzuordnungService
                 .getAlleFahrplanzuordnungenZuFahrplanIdInTime(fahrplan, zeitpunktVorher, zeitpunktNachher);
         for (Fahrplanzuordnung fahrplanzuordnung : fahrplanzuordnungen) {
             fahrtstrecken.add(getFahrtstreckeMitHaltestellen(fahrplanzuordnung));
@@ -94,8 +93,8 @@ public class FahrplanService extends BasicService<Fahrplan, Long> {
 
     private FahrtstreckeMitHaltestellenDTO getFahrtstreckeMitHaltestellen(Fahrplanzuordnung fahrplanzuordnung)
             throws InstanceNotFoundException {
-        ArrayList<HaltestellenzuordnungSortierDTO> sortiertehaltestellen = sortierer
-                .sortiereHaltestellen(fahrplanzuordnung.getFahrtstreckeid().getHaltestellenzuordnungen());
+        List<HaltestellenzuordnungSortierDTO> sortiertehaltestellen = sortierer.sortiereHaltestellen(
+                new ArrayList<>(fahrplanzuordnung.getFahrtstreckeid().getHaltestellenzuordnungen()));
         if (fahrplanzuordnung.isRichtung()) {
             sortiertehaltestellen = FahrtzeitenErmitteln.setzeUhrzeiten(sortiertehaltestellen,
                     fahrplanzuordnung.getStartzeitpunkt());

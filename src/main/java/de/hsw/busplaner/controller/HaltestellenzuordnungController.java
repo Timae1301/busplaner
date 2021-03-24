@@ -35,9 +35,9 @@ public class HaltestellenzuordnungController {
     }
 
     @PostMapping(path = "")
-    public ResponseEntity<ArrayList<Long>> postZuordnungen(
+    public ResponseEntity<List<Long>> postZuordnungen(
             @RequestBody List<HaltestellenzuordnungInputDTO> haltestellenzuordnungInputDTOs) {
-        ArrayList<Long> ids = new ArrayList<>();
+        List<Long> ids = new ArrayList<>();
         for (HaltestellenzuordnungInputDTO haltestellenzuordnungInputDTO : haltestellenzuordnungInputDTOs) {
             try {
                 ids.add(service.postHaltestellenzuordnug(haltestellenzuordnungInputDTO));
@@ -52,9 +52,8 @@ public class HaltestellenzuordnungController {
     }
 
     @GetMapping(path = "")
-    public ResponseEntity<ArrayList<HaltestellenzuordnungOutputDTO>> getAlleZuordnungen() {
-        ArrayList<HaltestellenzuordnungOutputDTO> zuordnungen = new ArrayList<>();
-        zuordnungen = service.getAlleZuordnungen();
+    public ResponseEntity<List<HaltestellenzuordnungOutputDTO>> getAlleZuordnungen() {
+        List<HaltestellenzuordnungOutputDTO> zuordnungen = service.getAlleZuordnungen();
         if (zuordnungen.isEmpty()) {
             log.warning("Es sind keine Haltestellenzuordnungen vorhanden");
         }
@@ -62,9 +61,9 @@ public class HaltestellenzuordnungController {
     }
 
     @GetMapping(path = "/{fahrtstreckeId}/sort")
-    public ResponseEntity<ArrayList<HaltestellenzuordnungSortierDTO>> getAlleZuordnungenSorted(
+    public ResponseEntity<List<HaltestellenzuordnungSortierDTO>> getAlleZuordnungenSorted(
             @PathVariable Long fahrtstreckeId) {
-        ArrayList<HaltestellenzuordnungSortierDTO> zuordnungen = new ArrayList<>();
+        List<HaltestellenzuordnungSortierDTO> zuordnungen = new ArrayList<>();
         try {
             zuordnungen = service.getAlleZuordnungenSorted(fahrtstreckeId);
         } catch (InstanceNotFoundException e) {
@@ -77,10 +76,9 @@ public class HaltestellenzuordnungController {
     }
 
     @GetMapping(path = "/{fahrtstreckeId}")
-    public ResponseEntity<ArrayList<HaltestellenzuordnungOutputDTO>> getAlleZuordnungenZuFahrtstrecke(
+    public ResponseEntity<List<HaltestellenzuordnungOutputDTO>> getAlleZuordnungenZuFahrtstrecke(
             @PathVariable Long fahrtstreckeId) {
-        ArrayList<HaltestellenzuordnungOutputDTO> zuordnungen = new ArrayList<>();
-        zuordnungen = service.getAlleZuordnungenDTOsZuFahrtstrecke(fahrtstreckeId);
+        List<HaltestellenzuordnungOutputDTO> zuordnungen = service.getAlleZuordnungenDTOsZuFahrtstrecke(fahrtstreckeId);
         if (zuordnungen.isEmpty()) {
             return ResponseEntity.notFound().build();
         }

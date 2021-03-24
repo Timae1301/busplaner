@@ -1,6 +1,6 @@
 package de.hsw.busplaner.dtos.fahrtstrecke;
 
-import java.util.ArrayList;
+import java.util.List;
 
 import de.hsw.busplaner.dtos.haltestellenzuordnung.HaltestellenzuordnungOhneNaechsteHaltestelleInputDTO;
 import lombok.Data;
@@ -12,7 +12,7 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 public class FahrtstreckeInputMitHaltestellenDTO extends FahrtstreckeDTO {
 
-    ArrayList<HaltestellenzuordnungOhneNaechsteHaltestelleInputDTO> haltestellen;
+    List<HaltestellenzuordnungOhneNaechsteHaltestelleInputDTO> haltestellen;
 
     Long buslinieId;
 }

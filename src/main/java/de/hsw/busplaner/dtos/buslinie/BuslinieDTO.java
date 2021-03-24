@@ -7,6 +7,6 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 public abstract class BuslinieDTO {
 
-    private long busnr;
+    long busnr;
 
 }

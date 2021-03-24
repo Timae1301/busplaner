@@ -1,13 +1,16 @@
 package de.hsw.busplaner.util;
 
 import java.time.LocalTime;
-import java.util.ArrayList;
+import java.util.List;
 
 import de.hsw.busplaner.dtos.haltestellenzuordnung.HaltestellenzuordnungSortierDTO;
 
 public class FahrtzeitenErmitteln {
 
-    public static int ermittleFahrtzeitInMinuten(ArrayList<HaltestellenzuordnungSortierDTO> haltestellen,
+    private FahrtzeitenErmitteln() {
+    }
+
+    public static int ermittleFahrtzeitInMinuten(List<HaltestellenzuordnungSortierDTO> haltestellen,
             Long haltestelleId) {
         int fahrtzeit = 0;
         for (HaltestellenzuordnungSortierDTO haltestelle : haltestellen) {
@@ -19,7 +22,7 @@ public class FahrtzeitenErmitteln {
         return fahrtzeit;
     }
 
-    public static int ermittleFahrtzeitInMinutenInvertiert(ArrayList<HaltestellenzuordnungSortierDTO> haltestellen,
+    public static int ermittleFahrtzeitInMinutenInvertiert(List<HaltestellenzuordnungSortierDTO> haltestellen,
             Long haltestelleId) {
         int fahrtzeit = 0;
         for (int i = haltestellen.size() - 1; i > 0; i--) {
@@ -31,8 +34,8 @@ public class FahrtzeitenErmitteln {
         return fahrtzeit;
     }
 
-    public static ArrayList<HaltestellenzuordnungSortierDTO> setzeUhrzeiten(
-            ArrayList<HaltestellenzuordnungSortierDTO> haltestellen, LocalTime startzeit) {
+    public static List<HaltestellenzuordnungSortierDTO> setzeUhrzeiten(
+            List<HaltestellenzuordnungSortierDTO> haltestellen, LocalTime startzeit) {
         if (haltestellen.isEmpty()) {
             return haltestellen;
         }
@@ -44,8 +47,8 @@ public class FahrtzeitenErmitteln {
         return haltestellen;
     }
 
-    public static ArrayList<HaltestellenzuordnungSortierDTO> setzeUhrzeitenInvertiert(
-            ArrayList<HaltestellenzuordnungSortierDTO> haltestellen, LocalTime startzeit) {
+    public static List<HaltestellenzuordnungSortierDTO> setzeUhrzeitenInvertiert(
+            List<HaltestellenzuordnungSortierDTO> haltestellen, LocalTime startzeit) {
         if (haltestellen.isEmpty()) {
             return haltestellen;
         }
@@ -56,5 +59,4 @@ public class FahrtzeitenErmitteln {
         }
         return haltestellen;
     }
-
 }

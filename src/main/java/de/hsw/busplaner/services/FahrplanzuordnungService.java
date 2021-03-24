@@ -2,9 +2,9 @@ package de.hsw.busplaner.services;
 
 import java.time.LocalTime;
 import java.util.ArrayList;
+import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.context.annotation.Lazy;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.web.server.ResponseStatusException;
@@ -23,16 +23,15 @@ public class FahrplanzuordnungService extends BasicService<Fahrplanzuordnung, Lo
 
     private final FahrplanzuordnungRepository repository;
 
-    private final FahrtstreckeService fahrtstreckeService;
-
-    private final FahrplanService fahrplanService;
+    @Autowired
+    private FahrtstreckeService fahrtstreckeService;
 
     @Autowired
-    public FahrplanzuordnungService(final FahrplanzuordnungRepository repository,
-            @Lazy final FahrtstreckeService fahrtstreckeService, @Lazy final FahrplanService fahrplanService) {
+    private FahrplanService fahrplanService;
+
+    @Autowired
+    public FahrplanzuordnungService(final FahrplanzuordnungRepository repository) {
         this.repository = repository;
-        this.fahrtstreckeService = fahrtstreckeService;
-        this.fahrplanService = fahrplanService;
     }
 
     @Override
@@ -52,7 +51,7 @@ public class FahrplanzuordnungService extends BasicService<Fahrplanzuordnung, Lo
 
     private void pruefeGueltigkeitDerFahrtstreckeFuerFahrplan(FahrplanzuordnungInputDTO fahrplanzuordnungInputDTO,
             Long buslinieId) {
-        ArrayList<Fahrplanzuordnung> fahrplanzuordnungen = getAlleFahrplanzuordnungenZuFahrplanId(
+        List<Fahrplanzuordnung> fahrplanzuordnungen = getAlleFahrplanzuordnungenZuFahrplanId(
                 fahrplanService.getFahrplanZuId(fahrplanzuordnungInputDTO.getFahrplanId()));
         if (fahrplanzuordnungen.isEmpty()) {
             return;
@@ -65,8 +64,8 @@ public class FahrplanzuordnungService extends BasicService<Fahrplanzuordnung, Lo
                 String.format("Die Fahrtstrecke muss von der Buslinie %s sein", buslinieIdFahrplan));
     }
 
-    public ArrayList<FahrplanzuordnungOutputDTO> getAlleFahrplanzuordnungen() {
-        ArrayList<FahrplanzuordnungOutputDTO> zuordnungen = new ArrayList<>();
+    public List<FahrplanzuordnungOutputDTO> getAlleFahrplanzuordnungen() {
+        List<FahrplanzuordnungOutputDTO> zuordnungen = new ArrayList<>();
         for (Fahrplanzuordnung fahrplanzuordnung : findAll()) {
             log.info(String.format("Zuordnung: %s gefunden", fahrplanzuordnung.getId()));
             zuordnungen.add(new FahrplanzuordnungOutputDTO(fahrplanzuordnung));
@@ -74,21 +73,21 @@ public class FahrplanzuordnungService extends BasicService<Fahrplanzuordnung, Lo
         return zuordnungen;
     }
 
-    public ArrayList<Fahrplanzuordnung> getAlleFahrplanzuordnungenZuFahrplanId(Fahrplan fahrplanId) {
-        ArrayList<Fahrplanzuordnung> zuordnungen = new ArrayList<>();
+    public List<Fahrplanzuordnung> getAlleFahrplanzuordnungenZuFahrplanId(Fahrplan fahrplanId) {
+        List<Fahrplanzuordnung> zuordnungen = new ArrayList<>();
         repository.findAllByFahrplanid(fahrplanId).forEach(zuordnungen::add);
         return zuordnungen;
     }
 
-    public ArrayList<Fahrplanzuordnung> getAlleFahrplanzuordnungenZuFahrtstreckeId(Fahrtstrecke fahrtstreckeId) {
-        ArrayList<Fahrplanzuordnung> zuordnungen = new ArrayList<>();
+    public List<Fahrplanzuordnung> getAlleFahrplanzuordnungenZuFahrtstreckeId(Fahrtstrecke fahrtstreckeId) {
+        List<Fahrplanzuordnung> zuordnungen = new ArrayList<>();
         repository.findAllByFahrtstreckeid(fahrtstreckeId).forEach(zuordnungen::add);
         return zuordnungen;
     }
 
-    public ArrayList<Fahrplanzuordnung> getAlleFahrplanzuordnungenZuFahrplanIdInTime(Fahrplan fahrplanId,
+    public List<Fahrplanzuordnung> getAlleFahrplanzuordnungenZuFahrplanIdInTime(Fahrplan fahrplanId,
             LocalTime zeitpunktVorher, LocalTime zeitpunktNachher) {
-        ArrayList<Fahrplanzuordnung> zuordnungen = new ArrayList<>();
+        List<Fahrplanzuordnung> zuordnungen = new ArrayList<>();
         repository.findAllByFahrplanidAndStartzeitpunktBetween(fahrplanId, zeitpunktVorher, zeitpunktNachher)
                 .forEach(zuordnungen::add);
         return zuordnungen;

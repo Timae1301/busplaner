@@ -1,7 +1,7 @@
 package de.hsw.busplaner.controller;
 
 import java.time.LocalTime;
-import java.util.ArrayList;
+import java.util.List;
 
 import javax.management.InstanceNotFoundException;
 
@@ -40,8 +40,8 @@ public class FahrplanController {
     }
 
     @GetMapping(path = "")
-    public ResponseEntity<ArrayList<FahrplanOutputDTO>> getAlleFahrplaene() {
-        ArrayList<FahrplanOutputDTO> fahrplaene = service.getAlleFahrplaene();
+    public ResponseEntity<List<FahrplanOutputDTO>> getAlleFahrplaene() {
+        List<FahrplanOutputDTO> fahrplaene = service.getAlleFahrplaene();
         if (fahrplaene.isEmpty()) {
             log.warning("Es sind keine Fahrplaene vorhanden");
         }
@@ -58,7 +58,7 @@ public class FahrplanController {
     public ResponseEntity<FahrplanauskunftDTO> getFahrplanauskunft(@PathVariable Long fahrplanId,
             @RequestParam LocalTime zeitpunktVorher, @RequestParam LocalTime zeitpunktNachher) {
         try {
-            FahrplanauskunftDTO fahrplanauskunft = service.getFahrplanaukunft(fahrplanId, zeitpunktVorher,
+            FahrplanauskunftDTO fahrplanauskunft = service.getFahrplanauskunft(fahrplanId, zeitpunktVorher,
                     zeitpunktNachher);
             return ResponseEntity.ok(fahrplanauskunft);
         } catch (InstanceNotFoundException e) {
