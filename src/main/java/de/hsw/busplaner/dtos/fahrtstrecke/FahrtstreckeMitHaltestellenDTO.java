@@ -18,7 +18,7 @@ public class FahrtstreckeMitHaltestellenDTO implements Comparable<FahrtstreckeMi
 
     LocalTime startzeitpunkt;
 
-    String starthaltestelle;
+    String zielhaltestelle;
 
     List<HaltestellenzuordnungSortierDTO> haltestellen;
 
@@ -29,7 +29,7 @@ public class FahrtstreckeMitHaltestellenDTO implements Comparable<FahrtstreckeMi
         this.haltestellen = haltestellen;
         if (!haltestellen.isEmpty()) {
             this.startzeitpunkt = haltestellen.get(0).getUhrzeit();
-            this.starthaltestelle = haltestellen.get(0).getHaltestellenName();
+            this.zielhaltestelle = haltestellen.get(haltestellen.size() - 1).getHaltestellenName();
         }
     }
 
