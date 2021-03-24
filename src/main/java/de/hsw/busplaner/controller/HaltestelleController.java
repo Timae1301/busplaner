@@ -1,6 +1,9 @@
 package de.hsw.busplaner.controller;
 
+import java.util.ArrayList;
 import java.util.List;
+
+import javax.management.InstanceNotFoundException;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.github.fge.jsonpatch.JsonPatch;
@@ -39,8 +42,20 @@ public class HaltestelleController {
     }
 
     @GetMapping(path = "")
-    public ResponseEntity<List<HaltestelleOutputDTO>> getAlleHaltestellen() {
-        List<HaltestelleOutputDTO> haltestellen = service.getAllHaltestellen();
+    public ResponseEntity<List<HaltestelleOutputDTO>> getAlleHaltestellen(
+            @RequestParam(required = false) Long buslinieId) {
+        List<HaltestelleOutputDTO> haltestellen = new ArrayList<>();
+        if (buslinieId == null) {
+            haltestellen = service.getAllHaltestellen();
+        } else {
+            try {
+                haltestellen = service.getAlleHaltestellenZuBuslinieId(buslinieId);
+            } catch (InstanceNotFoundException e) {
+                log.warning("Fehler beim Auslesen der Fahrten fuer die Haltestellen");
+            } catch (IllegalArgumentException e) {
+                log.warning(String.format("Keine Buslinie zu ID %s gefunden", buslinieId));
+            }
+        }
         if (haltestellen.isEmpty()) {
             log.warning("Es sind keine Haltestellen vorhanden");
         }

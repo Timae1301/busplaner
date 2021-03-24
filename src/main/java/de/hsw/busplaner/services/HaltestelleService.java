@@ -1,8 +1,10 @@
 package de.hsw.busplaner.services;
 
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Optional;
+import java.util.Set;
 
 import javax.management.InstanceNotFoundException;
 
@@ -11,6 +13,7 @@ import org.springframework.stereotype.Service;
 
 import de.hsw.busplaner.beans.Haltestelle;
 import de.hsw.busplaner.beans.Haltestellenzuordnung;
+import de.hsw.busplaner.dtos.fahrtstrecke.FahrtstreckeMitHaltestellenDTO;
 import de.hsw.busplaner.dtos.haltestelle.HaltestelleOutputDTO;
 import de.hsw.busplaner.dtos.haltestellenzuordnung.HaltestellenzuordnungSortierDTO;
 import de.hsw.busplaner.repositories.HaltestelleRepository;
@@ -28,6 +31,9 @@ public class HaltestelleService extends BasicService<Haltestelle, Long> {
 
     @Autowired
     private HaltestellenzuordnungService haltestellenzuordnungService;
+
+    @Autowired
+    private FahrtstreckeService fahrtstreckeService;
 
     @Autowired
     public HaltestelleService(final HaltestelleRepository repository) {
@@ -111,5 +117,17 @@ public class HaltestelleService extends BasicService<Haltestelle, Long> {
             throw new IllegalArgumentException(String.format("Keine Haltestelle zu ID %s gefunden", id));
         }
         return haltestelleOpt.get();
+    }
+
+    public List<HaltestelleOutputDTO> getAlleHaltestellenZuBuslinieId(Long buslinieId)
+            throws InstanceNotFoundException, IllegalArgumentException {
+        HashSet<HaltestelleOutputDTO> haltestellenSet = new HashSet<>();
+        for (FahrtstreckeMitHaltestellenDTO fahrtstrecke : fahrtstreckeService
+                .getAlleFahrtstreckenZuBuslinieId(buslinieId)) {
+            for (HaltestellenzuordnungSortierDTO haltestelle : fahrtstrecke.getHaltestellen()) {
+                haltestellenSet.add(new HaltestelleOutputDTO(getHaltestelleById(haltestelle.getHaltestelleId())));
+            }
+        }
+        return new ArrayList<>(haltestellenSet);
     }
 }
