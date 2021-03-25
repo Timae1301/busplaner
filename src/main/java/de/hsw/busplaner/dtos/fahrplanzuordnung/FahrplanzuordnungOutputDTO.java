@@ -20,8 +20,8 @@ public class FahrplanzuordnungOutputDTO extends FahrplanzuordnungDTO {
 
     public FahrplanzuordnungOutputDTO(Fahrplanzuordnung fahrplanzuordnung) {
         this.id = fahrplanzuordnung.getId();
-        this.fahrtstrecke = new FahrtstreckeOutputDTO(fahrplanzuordnung.getFahrtstreckeid());
-        this.fahrplan = new FahrplanOutputDTO(fahrplanzuordnung.getFahrplanid());
+        this.fahrtstrecke = new FahrtstreckeOutputDTO(fahrplanzuordnung.getFahrtstrecke());
+        this.fahrplan = new FahrplanOutputDTO(fahrplanzuordnung.getFahrplan());
         super.richtung = fahrplanzuordnung.isRichtung();
         super.startzeitpunkt = fahrplanzuordnung.getStartzeitpunkt();
     }

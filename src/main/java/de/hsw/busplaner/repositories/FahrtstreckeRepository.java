@@ -8,5 +8,5 @@ import de.hsw.busplaner.beans.Fahrtstrecke;
 
 @Repository
 public interface FahrtstreckeRepository extends CrudRepository<Fahrtstrecke, Long> {
-    Iterable<Fahrtstrecke> findAllByBuslinieId(Buslinie buslinie);
+    Iterable<Fahrtstrecke> findAllByBuslinie(Buslinie buslinie);
 }

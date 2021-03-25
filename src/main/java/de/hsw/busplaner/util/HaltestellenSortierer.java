@@ -59,7 +59,7 @@ public class HaltestellenSortierer {
     private Haltestellenzuordnung getErsteHaltestelle(List<Haltestellenzuordnung> haltestellenzuordnungen) {
         List<Long> naechstenHaltestellen = getNaechsteHaltestellen(haltestellenzuordnungen);
         for (Haltestellenzuordnung haltestellenzuordnung : haltestellenzuordnungen) {
-            if (!naechstenHaltestellen.contains(haltestellenzuordnung.getHaltestelleid().getId())) {
+            if (!naechstenHaltestellen.contains(haltestellenzuordnung.getHaltestelle().getId())) {
                 return haltestellenzuordnung;
             }
         }
@@ -77,7 +77,7 @@ public class HaltestellenSortierer {
     private Haltestellenzuordnung getNaechsteHaltestelle(List<Haltestellenzuordnung> haltestellenzuordnungen,
             Long naechsteHaltestelle) {
         for (Haltestellenzuordnung haltestellenzuordnung : haltestellenzuordnungen) {
-            if (haltestellenzuordnung.getHaltestelleid().getId().equals(naechsteHaltestelle)) {
+            if (haltestellenzuordnung.getHaltestelle().getId().equals(naechsteHaltestelle)) {
                 return haltestellenzuordnung;
             }
         }

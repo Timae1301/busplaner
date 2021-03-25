@@ -50,8 +50,8 @@ public class FahrtstreckeService extends BasicService<Fahrtstrecke, Long> {
         return repository;
     }
 
-    public Iterable<Fahrtstrecke> findAllByBuslinieId(Buslinie buslinieId) {
-        return repository.findAllByBuslinieId(buslinieId);
+    public Iterable<Fahrtstrecke> findAllByBuslinieId(Buslinie buslinie) {
+        return repository.findAllByBuslinie(buslinie);
     }
 
     public Long postFahrtstrecke(FahrtstreckeInputDTO fahrtstreckeInputDTO) throws IllegalArgumentException {
@@ -81,9 +81,9 @@ public class FahrtstreckeService extends BasicService<Fahrtstrecke, Long> {
         return fahrtstreckeOpt.get();
     }
 
-    private boolean isFahrtstreckeLoeschbar(Fahrtstrecke fahrtstreckeId) {
+    private boolean isFahrtstreckeLoeschbar(Fahrtstrecke fahrtstrecke) {
         List<Fahrplanzuordnung> fahrplanzuordnungen = fahrplanzuordnungService
-                .getAlleFahrplanzuordnungenZuFahrtstreckeId(fahrtstreckeId);
+                .getAlleFahrplanzuordnungenZuFahrtstrecke(fahrtstrecke);
         return fahrplanzuordnungen.isEmpty();
     }
 
@@ -116,7 +116,7 @@ public class FahrtstreckeService extends BasicService<Fahrtstrecke, Long> {
         for (FahrtstreckeMitHaltestellenDTO fahrtstreckeMitHaltestellenDTO : getFahrtstreckenMitBuslinieUndHaltestelle(
                 buslinieId, haltestelleId)) {
             for (Fahrplanzuordnung fahrplanzuordnung : fahrplanzuordnungService
-                    .getAlleFahrplanzuordnungenZuFahrtstreckeId(
+                    .getAlleFahrplanzuordnungenZuFahrtstrecke(
                             getFahrtstreckeZuId(fahrtstreckeMitHaltestellenDTO.getFahrtstreckeId()))) {
                 fahrtstreckenMitUhrzeit.add(
                         genFahrtstreckeMitUhrzeit(haltestelleId, fahrtstreckeMitHaltestellenDTO, fahrplanzuordnung));

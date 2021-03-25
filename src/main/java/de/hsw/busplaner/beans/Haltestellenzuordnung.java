@@ -32,21 +32,21 @@ public class Haltestellenzuordnung {
     @Column(name = "NAECHSTE_HALTESTELLE")
     private Long naechsteHaltestelle;
 
-    @JoinColumn(name = "haltestelleid")
+    @JoinColumn(name = "haltestelle")
     @ManyToOne
     @JsonBackReference(value = "HaltestelleHaltestellenzuordnung")
-    private Haltestelle haltestelleid;
+    private Haltestelle haltestelle;
 
-    @JoinColumn(name = "fahrtstreckeid")
+    @JoinColumn(name = "fahrtstrecke")
     @ManyToOne
     @JsonBackReference(value = "FahrtstreckeHaltestellenzuordnung")
-    private Fahrtstrecke fahrtstreckeid;
+    private Fahrtstrecke fahrtstrecke;
 
     public Haltestellenzuordnung(HaltestellenzuordnungInputDTO haltestellenzuordnungInputDTO, Fahrtstrecke fahrtstrecke,
             Haltestelle haltestelle) {
         this.fahrtzeit = haltestellenzuordnungInputDTO.getFahrtzeit();
-        this.fahrtstreckeid = fahrtstrecke;
-        this.haltestelleid = haltestelle;
+        this.fahrtstrecke = fahrtstrecke;
+        this.haltestelle = haltestelle;
         this.naechsteHaltestelle = haltestellenzuordnungInputDTO.getNaechsteHaltestelle();
     }
 }

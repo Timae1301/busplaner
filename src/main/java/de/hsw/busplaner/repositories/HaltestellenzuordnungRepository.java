@@ -8,5 +8,5 @@ import org.springframework.stereotype.Repository;
 
 @Repository
 public interface HaltestellenzuordnungRepository extends CrudRepository<Haltestellenzuordnung, Long> {
-    Iterable<Haltestellenzuordnung> findAllByFahrtstreckeid(Fahrtstrecke fahrtstrecke);
+    Iterable<Haltestellenzuordnung> findAllByFahrtstrecke(Fahrtstrecke fahrtstrecke);
 }

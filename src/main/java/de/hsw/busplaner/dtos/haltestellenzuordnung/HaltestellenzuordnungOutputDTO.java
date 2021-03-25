@@ -23,8 +23,8 @@ public class HaltestellenzuordnungOutputDTO extends HaltestellenzuordnungDTO {
 
     public HaltestellenzuordnungOutputDTO(Haltestellenzuordnung zuordnung, Haltestelle naechsteHaltestelle) {
         this.id = zuordnung.getId();
-        this.haltestelle = new HaltestelleOutputDTO(zuordnung.getHaltestelleid());
-        this.fahrtstrecke = new FahrtstreckeOutputDTO(zuordnung.getFahrtstreckeid());
+        this.haltestelle = new HaltestelleOutputDTO(zuordnung.getHaltestelle());
+        this.fahrtstrecke = new FahrtstreckeOutputDTO(zuordnung.getFahrtstrecke());
         this.naechsteHaltestelle = new HaltestelleOutputDTO(naechsteHaltestelle);
         super.fahrtzeit = zuordnung.getFahrtzeit();
     }

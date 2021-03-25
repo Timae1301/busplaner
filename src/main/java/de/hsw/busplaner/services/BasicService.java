@@ -24,10 +24,6 @@ public abstract class BasicService<T, ID> {
         return getRepository().findById(identifier);
     }
 
-    public boolean existsById(ID identifier) {
-        return getRepository().existsById(identifier);
-    }
-
     public Iterable<T> findAll() {
         return getRepository().findAll();
     }

@@ -22,8 +22,8 @@ public class HaltestellenzuordnungSortierDTO extends HaltestellenzuordnungDTO
 
     public HaltestellenzuordnungSortierDTO(Haltestellenzuordnung zuordnung) {
         super.fahrtzeit = zuordnung.getFahrtzeit();
-        this.haltestelleId = zuordnung.getHaltestelleid().getId();
-        this.haltestellenName = zuordnung.getHaltestelleid().getName();
+        this.haltestelleId = zuordnung.getHaltestelle().getId();
+        this.haltestellenName = zuordnung.getHaltestelle().getName();
     }
 
     public HaltestellenzuordnungSortierDTO(Haltestelle haltestelle) {

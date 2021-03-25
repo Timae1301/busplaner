@@ -30,7 +30,7 @@ public class Haltestelle {
     @Column(name = "NAME")
     private String name;
 
-    @OneToMany(mappedBy = "haltestelleid")
+    @OneToMany(mappedBy = "haltestelle")
     @JsonManagedReference(value = "HaltestelleHaltestellenzuordnung")
     List<Haltestellenzuordnung> haltestellenzuordnungen;
 

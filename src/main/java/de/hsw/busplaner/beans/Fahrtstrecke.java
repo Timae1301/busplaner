@@ -33,21 +33,21 @@ public class Fahrtstrecke {
     @Column(name = "NAME")
     private String name;
 
-    @JoinColumn(name = "buslinieId")
+    @JoinColumn(name = "buslinie")
     @ManyToOne
     @JsonBackReference(value = "BuslinieFahrtstrecke")
-    private Buslinie buslinieId;
+    private Buslinie buslinie;
 
-    @OneToMany(mappedBy = "fahrtstreckeid")
+    @OneToMany(mappedBy = "fahrtstrecke")
     @JsonManagedReference(value = "FahrtstreckeFahrplanzuordnung")
     List<Fahrplanzuordnung> fahrplanzuordnungen;
 
-    @OneToMany(mappedBy = "fahrtstreckeid")
+    @OneToMany(mappedBy = "fahrtstrecke")
     @JsonManagedReference(value = "FahrtstreckeHaltestellenzuordnung")
     List<Haltestellenzuordnung> haltestellenzuordnungen;
 
     public Fahrtstrecke(FahrtstreckeInputDTO fahrtstreckeInputDTO, Buslinie buslinie) {
         this.name = fahrtstreckeInputDTO.getName();
-        this.buslinieId = buslinie;
+        this.buslinie = buslinie;
     }
 }

@@ -36,21 +36,21 @@ public class Fahrplanzuordnung {
     @Column(name = "STARTZEITPUNKT")
     private LocalTime startzeitpunkt;
 
-    @JoinColumn(name = "fahrtstreckeid")
+    @JoinColumn(name = "fahrtstrecke")
     @ManyToOne
     @JsonBackReference(value = "FahrtstreckeFahrplanzuordnung")
-    private Fahrtstrecke fahrtstreckeid;
+    private Fahrtstrecke fahrtstrecke;
 
-    @JoinColumn(name = "fahrplanid")
+    @JoinColumn(name = "fahrplan")
     @ManyToOne
     @JsonBackReference(value = "FahrplanFahrplanzuordnung")
-    private Fahrplan fahrplanid;
+    private Fahrplan fahrplan;
 
     public Fahrplanzuordnung(FahrplanzuordnungInputDTO fahrplanzuordnungInputDTO, Fahrtstrecke fahrtstrecke,
             Fahrplan fahrplan) {
         this.richtung = fahrplanzuordnungInputDTO.isRichtung();
         this.startzeitpunkt = fahrplanzuordnungInputDTO.getStartzeitpunkt();
-        this.fahrtstreckeid = fahrtstrecke;
-        this.fahrplanid = fahrplan;
+        this.fahrtstrecke = fahrtstrecke;
+        this.fahrplan = fahrplan;
     }
 }

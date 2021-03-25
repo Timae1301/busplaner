@@ -71,14 +71,14 @@ public class HaltestellenzuordnungService extends BasicService<Haltestellenzuord
             throws InstanceNotFoundException {
         ArrayList<Haltestellenzuordnung> zuordnungen = new ArrayList<>();
         Fahrtstrecke fahrtstrecke = fahrtstreckeService.getFahrtstreckeZuId(fahrtstreckeId);
-        repository.findAllByFahrtstreckeid(fahrtstrecke).forEach(zuordnungen::add);
+        repository.findAllByFahrtstrecke(fahrtstrecke).forEach(zuordnungen::add);
         return sortierer.sortiereHaltestellen(zuordnungen);
     }
 
     public List<HaltestellenzuordnungOutputDTO> getAlleZuordnungenDTOsZuFahrtstrecke(Long fahrtstreckeId) {
         Fahrtstrecke fahrtstrecke = fahrtstreckeService.getFahrtstreckeZuId(fahrtstreckeId);
         List<HaltestellenzuordnungOutputDTO> zuordnungen = new ArrayList<>();
-        for (Haltestellenzuordnung zuordnung : repository.findAllByFahrtstreckeid(fahrtstrecke)) {
+        for (Haltestellenzuordnung zuordnung : repository.findAllByFahrtstrecke(fahrtstrecke)) {
             Haltestelle neachsteHaltestelle = haltestelleService.getHaltestelleById(zuordnung.getNaechsteHaltestelle());
             zuordnungen.add(new HaltestellenzuordnungOutputDTO(zuordnung, neachsteHaltestelle));
         }
@@ -88,7 +88,7 @@ public class HaltestellenzuordnungService extends BasicService<Haltestellenzuord
     public List<Haltestellenzuordnung> getAlleZuordnungenZuFahrtstrecke(Long fahrtstreckeId) {
         Fahrtstrecke fahrtstrecke = fahrtstreckeService.getFahrtstreckeZuId(fahrtstreckeId);
         List<Haltestellenzuordnung> zuordnungen = new ArrayList<>();
-        for (Haltestellenzuordnung zuordnung : repository.findAllByFahrtstreckeid(fahrtstrecke)) {
+        for (Haltestellenzuordnung zuordnung : repository.findAllByFahrtstrecke(fahrtstrecke)) {
             zuordnungen.add(zuordnung);
         }
         return zuordnungen;

@@ -32,7 +32,7 @@ public class Buslinie {
     @Column(name = "BUSNR")
     private Long busnr;
 
-    @OneToMany(mappedBy = "buslinieId")
+    @OneToMany(mappedBy = "buslinie")
     @JsonManagedReference(value = "BuslinieFahrtstrecke")
     List<Fahrtstrecke> fahrtstrecken;
 

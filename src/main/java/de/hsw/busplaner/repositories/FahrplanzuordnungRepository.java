@@ -11,10 +11,10 @@ import de.hsw.busplaner.beans.Fahrtstrecke;
 
 @Repository
 public interface FahrplanzuordnungRepository extends CrudRepository<Fahrplanzuordnung, Long> {
-    Iterable<Fahrplanzuordnung> findAllByFahrplanid(Fahrplan fahrplanId);
+    Iterable<Fahrplanzuordnung> findAllByFahrplan(Fahrplan fahrplan);
 
-    Iterable<Fahrplanzuordnung> findAllByFahrtstreckeid(Fahrtstrecke fahrtstreckeId);
+    Iterable<Fahrplanzuordnung> findAllByFahrtstrecke(Fahrtstrecke fahrtstrecke);
 
-    Iterable<Fahrplanzuordnung> findAllByFahrplanidAndStartzeitpunktBetween(Fahrplan fahrplanId,
-            LocalTime zeitpunktVorher, LocalTime zeitpunktNachher);
+    Iterable<Fahrplanzuordnung> findAllByFahrplanAndStartzeitpunktBetween(Fahrplan fahrplan, LocalTime zeitpunktVorher,
+            LocalTime zeitpunktNachher);
 }

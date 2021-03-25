@@ -29,7 +29,7 @@ public class Fahrplan {
     @Column(name = "NAME")
     private String name;
 
-    @OneToMany(mappedBy = "fahrplanid")
+    @OneToMany(mappedBy = "fahrplan")
     @JsonManagedReference(value = "FahrplanFahrplanzuordnung")
     List<Fahrplanzuordnung> fahrplanzuordnungen;
 
