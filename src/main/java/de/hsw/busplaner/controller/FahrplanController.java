@@ -34,8 +34,8 @@ public class FahrplanController {
         this.service = service;
     }
 
-    @PostMapping(path = "")
-    public ResponseEntity<Long> postFahrplan(@RequestParam String name) {
+    @PostMapping(path = "/{name}")
+    public ResponseEntity<Long> postFahrplan(@PathVariable String name) {
         return ResponseEntity.ok(service.postFahrplan(name));
     }
 
