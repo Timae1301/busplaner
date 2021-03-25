@@ -17,6 +17,10 @@ import de.hsw.busplaner.dtos.fahrplanzuordnung.FahrplanzuordnungOutputDTO;
 import de.hsw.busplaner.repositories.FahrplanzuordnungRepository;
 import lombok.extern.java.Log;
 
+/**
+ * Der Service der Fahrplanzuordnung erbt von dem abstrakten BasicService für
+ * die CRUD Operationen
+ */
 @Log
 @Service
 public class FahrplanzuordnungService extends BasicService<Fahrplanzuordnung, Long> {

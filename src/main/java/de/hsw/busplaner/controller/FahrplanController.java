@@ -21,6 +21,10 @@ import de.hsw.busplaner.dtos.fahrplan.FahrplanauskunftDTO;
 import de.hsw.busplaner.services.FahrplanService;
 import lombok.extern.java.Log;
 
+/**
+ * Der Controller des Fahrplans stellt Endpunkte bereit unter dem Pfad
+ * /api/fahrplan
+ */
 @Log
 @RestController
 @CrossOrigin(origins = "*", allowedHeaders = "*")
@@ -34,11 +38,22 @@ public class FahrplanController {
         this.service = service;
     }
 
+    /**
+     * Erstellt neuen Fahrplan zu übergebenem Namen
+     * 
+     * @param name
+     * @return ResponseEntity mit ID des neuen Fahrplans
+     */
     @PostMapping(path = "/{name}")
     public ResponseEntity<Long> postFahrplan(@PathVariable String name) {
         return ResponseEntity.ok(service.postFahrplan(name));
     }
 
+    /**
+     * Gibt alle Fahrpläne zurück
+     * 
+     * @return ResponseEntity mit Liste aus FahrplanOutputDTOs
+     */
     @GetMapping(path = "")
     public ResponseEntity<List<FahrplanOutputDTO>> getAlleFahrplaene() {
         List<FahrplanOutputDTO> fahrplaene = service.getAlleFahrplaene();
@@ -48,12 +63,27 @@ public class FahrplanController {
         return ResponseEntity.ok(fahrplaene);
     }
 
+    /**
+     * Löscht Fahrplan zu übergebener ID
+     * 
+     * @param fahrplanId
+     * @return ResponseEntity mit Boolean ob die Löschung erfolgreich war
+     */
     @DeleteMapping(path = "/{fahrplanId}")
     public ResponseEntity<Boolean> deleteFahrplan(@PathVariable Long fahrplanId) {
         service.deleteFahrplan(fahrplanId);
         return ResponseEntity.ok(true);
     }
 
+    /**
+     * Gibt die Fahrplanauskunft der FahrplanID innerhalb der eingestellten
+     * Zeitspanne aus
+     * 
+     * @param fahrplanId
+     * @param zeitpunktVorher
+     * @param zeitpunktNachher
+     * @return ResponseEntity mit FahrplanauskunftDTO
+     */
     @GetMapping(path = "/auskunft/{fahrplanId}")
     public ResponseEntity<FahrplanauskunftDTO> getFahrplanauskunft(@PathVariable Long fahrplanId,
             @RequestParam LocalTime zeitpunktVorher, @RequestParam LocalTime zeitpunktNachher) {
@@ -61,7 +91,7 @@ public class FahrplanController {
             FahrplanauskunftDTO fahrplanauskunft = service.getFahrplanauskunft(fahrplanId, zeitpunktVorher,
                     zeitpunktNachher);
             return ResponseEntity.ok(fahrplanauskunft);
-        } catch (InstanceNotFoundException e) {
+        } catch (InstanceNotFoundException | IllegalArgumentException e) {
             return ResponseEntity.notFound().build();
         }
     }

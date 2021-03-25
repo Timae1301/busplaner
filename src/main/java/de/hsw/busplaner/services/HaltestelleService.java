@@ -19,6 +19,10 @@ import de.hsw.busplaner.repositories.HaltestelleRepository;
 import de.hsw.busplaner.util.HaltestellenSortierer;
 import lombok.extern.java.Log;
 
+/**
+ * Der Service der Haltestelle erbt von dem abstrakten BasicService für die CRUD
+ * Operationen
+ */
 @Log
 @Service
 public class HaltestelleService extends BasicService<Haltestelle, Long> {
@@ -63,14 +67,6 @@ public class HaltestelleService extends BasicService<Haltestelle, Long> {
         return save(haltestelle).getId();
     }
 
-    public HaltestelleOutputDTO getHaltestelle(Long haltestelleId) {
-        Optional<Haltestelle> haltestelleOpt = findById(haltestelleId);
-        if (haltestelleOpt.isPresent()) {
-            return new HaltestelleOutputDTO(haltestelleOpt.get());
-        }
-        throw new IllegalArgumentException(String.format("Keine Haltestelle zu ID: %s gefunden", haltestelleId));
-    }
-
     public void patchHaltestelle(HaltestelleOutputDTO haltestelleOutputDTO) {
         Haltestelle haltestelle = new Haltestelle(haltestelleOutputDTO);
         save(haltestelle);
@@ -110,12 +106,33 @@ public class HaltestelleService extends BasicService<Haltestelle, Long> {
         return false;
     }
 
+    /**
+     * Findet einen Haltestelle anhand einer ID und gibt ihn zurück
+     * 
+     * @param id
+     * @return Haltestelle
+     * @throws IllegalArgumentException wenn zu der ID keine Haltestelle gefunden
+     *                                  wurde
+     */
     public Haltestelle getHaltestelleById(Long id) throws IllegalArgumentException {
         Optional<Haltestelle> haltestelleOpt = findById(id);
         if (haltestelleOpt.isEmpty()) {
+            log.warning(String.format("Keine Haltestelle zu ID %s gefunden", id));
             throw new IllegalArgumentException(String.format("Keine Haltestelle zu ID %s gefunden", id));
         }
         return haltestelleOpt.get();
+    }
+
+    /**
+     * Findet aus der ID ein HaltestelleOutputDTO und gibt es zurück
+     * 
+     * @param haltestelleId
+     * @return HaltestelleOutputDTO
+     * @throws IllegalArgumentException wenn zu der ID keine Haltestelle gefunden
+     *                                  wurde
+     */
+    public HaltestelleOutputDTO getHaltestelleDtoById(Long haltestelleId) throws IllegalArgumentException {
+        return new HaltestelleOutputDTO(getHaltestelleById(haltestelleId));
     }
 
     public List<HaltestelleOutputDTO> getAlleHaltestellenZuBuslinieId(Long buslinieId)

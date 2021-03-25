@@ -16,6 +16,10 @@ import de.hsw.busplaner.dtos.fahrtstrecke.FahrtstreckeOutputDTO;
 import de.hsw.busplaner.repositories.BuslinieRepository;
 import lombok.extern.java.Log;
 
+/**
+ * Der Service der Buslinie erbt von dem abstrakten BasicService für die CRUD
+ * Operationen
+ */
 @Service
 @Log
 public class BuslinieService extends BasicService<Buslinie, Long> {
@@ -38,6 +42,12 @@ public class BuslinieService extends BasicService<Buslinie, Long> {
         return repository;
     }
 
+    /**
+     * Gibt eine Buslinie zu einer BusNr zurück
+     * 
+     * @param busnr
+     * @return Buslinie
+     */
     public Buslinie findByBusnr(Long busnr) {
         Optional<Buslinie> buslinieOpt = repository.findByBusnr(busnr);
         if (buslinieOpt.isPresent()) {
@@ -47,6 +57,12 @@ public class BuslinieService extends BasicService<Buslinie, Long> {
         throw new IllegalArgumentException(String.format("Zu der BusNr %s wurde kein Eintrag gefunden", busnr));
     }
 
+    /**
+     * Liest alle Buslinien aus dem Repository aus und erstellt daraus eine Liste an
+     * BuslinieOutputDTOs
+     * 
+     * @return Liste aus BuslinieOutputDTOs
+     */
     public List<BuslinieOutputDTO> getAllBuslinien() {
         List<BuslinieOutputDTO> buslinien = new ArrayList<>();
         for (Buslinie buslinie : findAll()) {
@@ -60,15 +76,35 @@ public class BuslinieService extends BasicService<Buslinie, Long> {
         return buslinien;
     }
 
+    /**
+     * Speichert eine neue Buslinie anhand ihrer BusNr und gibt die ID zurück
+     * 
+     * @param busNr
+     * @return ID der neuen Buslinie
+     */
     public Long postBuslinie(Long busNr) {
         log.info(String.format("Neue Buslinie: %s angelegt", busNr));
         return save(new Buslinie(busNr)).getId();
     }
 
-    public BuslinieOutputDTO getBuslinie(Long buslinieId) throws IllegalArgumentException {
+    /**
+     * Erstellt aus einer BuslinieID ein BuslinieOutputDTO
+     * 
+     * @param buslinieId
+     * @return BuslinieOutputDTO
+     * @throws IllegalArgumentException wenn zu der ID keine Buslinie gefunden wurde
+     */
+    public BuslinieOutputDTO getBuslinieDtoById(Long buslinieId) throws IllegalArgumentException {
         return new BuslinieOutputDTO(getBuslinieById(buslinieId));
     }
 
+    /**
+     * Findet eine Buslinie anhand einer ID und gibt sie zurück
+     * 
+     * @param buslinieId
+     * @return Buslinie
+     * @throws IllegalArgumentException wenn zu der ID keine Buslinie gefunden wurde
+     */
     public Buslinie getBuslinieById(Long buslinieId) throws IllegalArgumentException {
         Optional<Buslinie> buslinieOpt = findById(buslinieId);
         if (buslinieOpt.isPresent()) {
@@ -78,18 +114,37 @@ public class BuslinieService extends BasicService<Buslinie, Long> {
                 String.format("Zu der BuslinienId %s wurde kein Eintrag gefunden", buslinieId));
     }
 
+    /**
+     * Speichert eine berarbeitete Buslinie ab
+     * 
+     * @param buslinieDTO
+     */
     public void patchBuslinie(BuslinieOutputDTO buslinieDTO) {
-        Buslinie buslinie = new Buslinie(buslinieDTO);
-        save(buslinie);
+        save(new Buslinie(buslinieDTO));
     }
 
-    private boolean isBuslinieLoeschbar(Long buslinieId) {
+    /**
+     * Prüft die Löschbarkeit einer Buslinie anhand der Präsenz von Fahrtstrecken zu
+     * dieser Buslinie
+     * 
+     * @param buslinieId
+     * @return boolean, ob Fahrtstrecken zu der Buslinie existieren
+     * @throws IllegalArgumentException wenn zu der ID keine Buslinie gefunden wurde
+     */
+    private boolean isBuslinieLoeschbar(Long buslinieId) throws IllegalArgumentException {
         List<Fahrtstrecke> fahrtstreckenMitBuslinie = new ArrayList<>();
         Buslinie buslinie = getBuslinieById(buslinieId);
         fahrtstreckeService.findAllByBuslinieId(buslinie).forEach(fahrtstreckenMitBuslinie::add);
         return fahrtstreckenMitBuslinie.isEmpty();
     }
 
+    /**
+     * Prüft, ob eine Buslinie gelöscht werden kann und löscht sie anhand ihrer ID
+     * 
+     * @param buslinieId
+     * @return boolean, ob die Buslinie gelöscht wurde
+     * @throws IllegalArgumentException wenn zu der ID keine Buslinie gefunden wurde
+     */
     public boolean deleteBuslinie(Long buslinieId) throws IllegalArgumentException {
         boolean isBuslinieLoeschbar = isBuslinieLoeschbar(buslinieId);
         if (isBuslinieLoeschbar) {
@@ -98,6 +153,15 @@ public class BuslinieService extends BasicService<Buslinie, Long> {
         return isBuslinieLoeschbar;
     }
 
+    /**
+     * Gibt alle Buslinien aus, die die übergebene Haltestelle beinhalten
+     * 
+     * @param haltestelleId
+     * @return Liste mit BuslinienDTOs in denen die übergebene Haltestelle ist
+     * @throws InstanceNotFoundException wenn beim Sortieren der Haltestellen die
+     *                                   Informationen zu der Haltestelle nicht
+     *                                   ermittelt werden konnten
+     */
     public List<BuslinieOutputDTO> getAlleBuslinienFuerHaltestelle(Long haltestelleId)
             throws InstanceNotFoundException {
         List<BuslinieOutputDTO> buslinien = new ArrayList<>();

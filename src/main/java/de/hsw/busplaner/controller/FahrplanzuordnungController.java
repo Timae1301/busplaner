@@ -16,6 +16,10 @@ import de.hsw.busplaner.dtos.fahrplanzuordnung.FahrplanzuordnungOutputDTO;
 import de.hsw.busplaner.services.FahrplanzuordnungService;
 import lombok.extern.java.Log;
 
+/**
+ * Der Controller der Fahrplanzuordnung stellt Endpunkte bereit unter dem Pfad
+ * /api/fahrplanzuordnung
+ */
 @Log
 @RestController
 @CrossOrigin(origins = "*", allowedHeaders = "*")
@@ -29,6 +33,12 @@ public class FahrplanzuordnungController {
         this.service = service;
     }
 
+    /**
+     * Erstellt neue Fahrplanzuordnung anhand übergebenem FahrplanzuordnungInputDTO
+     * 
+     * @param zuordung
+     * @return ResponseEntity mit ID der neuen Fahrplanzuordnung
+     */
     @PostMapping(path = "")
     public ResponseEntity<Long> postFahrplanzuordnung(@RequestBody FahrplanzuordnungInputDTO zuordung) {
         try {
@@ -38,6 +48,11 @@ public class FahrplanzuordnungController {
         }
     }
 
+    /**
+     * Gibt alle Fahrplanzuordnungen aus
+     * 
+     * @return ResponseEntity mit Liste aus FahrplanzuordnungOutputDTOs
+     */
     @GetMapping(path = "")
     public ResponseEntity<List<FahrplanzuordnungOutputDTO>> getAlleFahrplanzuordnungen() {
         List<FahrplanzuordnungOutputDTO> zuordnungen = service.getAlleFahrplanzuordnungen();

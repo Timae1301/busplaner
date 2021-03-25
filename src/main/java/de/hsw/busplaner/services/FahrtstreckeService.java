@@ -22,7 +22,13 @@ import de.hsw.busplaner.dtos.haltestellenzuordnung.HaltestellenzuordnungSortierD
 import de.hsw.busplaner.repositories.FahrtstreckeRepository;
 import de.hsw.busplaner.util.FahrtzeitenErmitteln;
 import de.hsw.busplaner.util.HaltestellenSortierer;
+import lombok.extern.java.Log;
 
+/**
+ * Der Service der Fahrtstrecke erbt von dem abstrakten BasicService für die
+ * CRUD Operationen
+ */
+@Log
 @Service
 public class FahrtstreckeService extends BasicService<Fahrtstrecke, Long> {
 
@@ -73,9 +79,18 @@ public class FahrtstreckeService extends BasicService<Fahrtstrecke, Long> {
         return fahrtstrecken;
     }
 
+    /**
+     * Findet einen Fahrtstrecke anhand einer ID und gibt ihn zurück
+     * 
+     * @param id
+     * @return Fahrtstrecke
+     * @throws IllegalArgumentException wenn zu der ID keine Fahrtstrecke gefunden
+     *                                  wurde
+     */
     public Fahrtstrecke getFahrtstreckeZuId(Long id) {
         Optional<Fahrtstrecke> fahrtstreckeOpt = findById(id);
         if (fahrtstreckeOpt.isEmpty()) {
+            log.warning(String.format("Keine Fahrtstrecke zu ID %s gefunden", id));
             throw new IllegalArgumentException(String.format("Keine Fahrtstrecke zu ID %s gefunden", id));
         }
         return fahrtstreckeOpt.get();

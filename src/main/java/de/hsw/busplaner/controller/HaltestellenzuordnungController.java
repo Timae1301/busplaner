@@ -21,6 +21,10 @@ import de.hsw.busplaner.dtos.haltestellenzuordnung.HaltestellenzuordnungSortierD
 import de.hsw.busplaner.services.HaltestellenzuordnungService;
 import lombok.extern.java.Log;
 
+/**
+ * Der Controller der Haltestellenzuordnung stellt Endpunkte bereit unter dem
+ * Pfad /api/haltestellenzuordnung
+ */
 @Log
 @RestController
 @CrossOrigin(origins = "*", allowedHeaders = "*")
@@ -34,6 +38,13 @@ public class HaltestellenzuordnungController {
         this.service = service;
     }
 
+    /**
+     * Erstellt eine meherere Haltestellenzuordnungen anhand einer Liste an
+     * HaltestellenzuordnungInputDTOs
+     * 
+     * @param haltestellenzuordnungInputDTOs
+     * @return ResponseEntity mit Liste an IDs der neuen Haltestellenzuordnungen
+     */
     @PostMapping(path = "")
     public ResponseEntity<List<Long>> postZuordnungen(
             @RequestBody List<HaltestellenzuordnungInputDTO> haltestellenzuordnungInputDTOs) {
@@ -51,6 +62,11 @@ public class HaltestellenzuordnungController {
         return ResponseEntity.ok(ids);
     }
 
+    /**
+     * Gibt alle Haltestellenzuordnungen zurück
+     * 
+     * @return ResponseEntity mit Liste aus HaltestellenzuordnungOutputDTOs
+     */
     @GetMapping(path = "")
     public ResponseEntity<List<HaltestellenzuordnungOutputDTO>> getAlleZuordnungen() {
         List<HaltestellenzuordnungOutputDTO> zuordnungen = service.getAlleZuordnungen();
@@ -60,6 +76,13 @@ public class HaltestellenzuordnungController {
         return ResponseEntity.ok(zuordnungen);
     }
 
+    /**
+     * Gibt alle Haltestellenzuordnungen zu einer Fahrtstrecke sortiert mit Uhrzeit
+     * aus
+     * 
+     * @param fahrtstreckeId
+     * @return ResponseEntity mit Liste aus HaltestellenzuordnungSortierDTOs
+     */
     @GetMapping(path = "/{fahrtstreckeId}/sort")
     public ResponseEntity<List<HaltestellenzuordnungSortierDTO>> getAlleZuordnungenSorted(
             @PathVariable Long fahrtstreckeId) {
@@ -71,16 +94,6 @@ public class HaltestellenzuordnungController {
         }
         if (zuordnungen.isEmpty()) {
             log.warning("Es sind keine Haltestellenzuordnungen vorhanden");
-        }
-        return ResponseEntity.ok(zuordnungen);
-    }
-
-    @GetMapping(path = "/{fahrtstreckeId}")
-    public ResponseEntity<List<HaltestellenzuordnungOutputDTO>> getAlleZuordnungenZuFahrtstrecke(
-            @PathVariable Long fahrtstreckeId) {
-        List<HaltestellenzuordnungOutputDTO> zuordnungen = service.getAlleZuordnungenDTOsZuFahrtstrecke(fahrtstreckeId);
-        if (zuordnungen.isEmpty()) {
-            return ResponseEntity.notFound().build();
         }
         return ResponseEntity.ok(zuordnungen);
     }

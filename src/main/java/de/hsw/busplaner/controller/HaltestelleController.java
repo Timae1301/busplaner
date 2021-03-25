@@ -28,6 +28,10 @@ import de.hsw.busplaner.services.HaltestelleService;
 import de.hsw.busplaner.util.PatchUtil;
 import lombok.extern.java.Log;
 
+/**
+ * Der Controller der Haltestelle stellt Endpunkte bereit unter dem Pfad
+ * /api/haltestelle
+ */
 @RestController
 @Log
 @CrossOrigin(origins = "*", allowedHeaders = "*")
@@ -41,6 +45,12 @@ public class HaltestelleController {
         this.service = service;
     }
 
+    /**
+     * Gibt alle Haltestellen aus wahlweise zu einer übergebenen BuslinienID
+     * 
+     * @param buslinieId
+     * @return ResponseEntity mit Liste aus HaltestelleOutputDTOs
+     */
     @GetMapping(path = "")
     public ResponseEntity<List<HaltestelleOutputDTO>> getAlleHaltestellen(
             @RequestParam(required = false) Long buslinieId) {
@@ -62,16 +72,30 @@ public class HaltestelleController {
         return ResponseEntity.ok(haltestellen);
     }
 
+    /**
+     * Erstellt eine Haltestelle anhand des übergebenen Namens
+     * 
+     * @param haltestelleName
+     * @return ResponseEntity mit der ID der neuen Haltestelle
+     */
     @PostMapping(path = "/{haltestelleName}")
     public ResponseEntity<Long> postHaltestelle(@PathVariable String haltestelleName) {
         return ResponseEntity.ok(service.postHaltestelle(haltestelleName));
     }
 
+    /**
+     * Bearbeitet die Haltestelle zu der ID anhand des übergebenen Bodys in Form
+     * eines JSON-Patches
+     * 
+     * @param haltestelleId
+     * @param jsonPatch
+     * @return ResponseEntity mit Boolean ob das Bearbeiten erfolgreich war
+     */
     @PatchMapping(path = "")
     public ResponseEntity<Boolean> patchHaltestelle(@RequestParam Long haltestelleId,
             @RequestBody JsonPatch jsonPatch) {
         try {
-            HaltestelleOutputDTO haltestelle = service.getHaltestelle(haltestelleId);
+            HaltestelleOutputDTO haltestelle = service.getHaltestelleDtoById(haltestelleId);
             haltestelle = PatchUtil.applyPatch(jsonPatch, haltestelle, HaltestelleOutputDTO.class);
             service.patchHaltestelle(haltestelle);
             return ResponseEntity.ok(true);
@@ -82,6 +106,12 @@ public class HaltestelleController {
         }
     }
 
+    /**
+     * Löscht eine Haltestelle anhand der übergebenen ID
+     * 
+     * @param haltestelleId
+     * @return ResponseEntity mit Boolean ob das Bearbeiten erfolgreich war
+     */
     @DeleteMapping(path = "/{haltestelleId}")
     public ResponseEntity<Boolean> deleteHaltestelle(@PathVariable Long haltestelleId) {
         try {

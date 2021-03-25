@@ -7,6 +7,10 @@ import org.springframework.stereotype.Service;
 
 import lombok.extern.java.Log;
 
+/**
+ * Dieser abstrakte Basic Service stellt den Services alle CRUD Operationen zur
+ * Verfügung die von ihm erben.
+ */
 @Service
 @Log
 public abstract class BasicService<T, ID> {
@@ -52,5 +56,11 @@ public abstract class BasicService<T, ID> {
         getRepository().deleteAll();
     }
 
+    /**
+     * zu implementierende Methode, um das Repository nutzen zu können und die
+     * Methoden zu ermöglichen
+     * 
+     * @return ein CrudRepository
+     */
     protected abstract CrudRepository<T, ID> getRepository();
 }

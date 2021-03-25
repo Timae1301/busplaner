@@ -27,6 +27,10 @@ import de.hsw.busplaner.dtos.haltestellenzuordnung.HaltestellenzuordnungOhneNaec
 import de.hsw.busplaner.services.FahrtstreckeService;
 import lombok.extern.java.Log;
 
+/**
+ * Der Controller der Fahrtstrecke stellt Endpunkte bereit unter dem Pfad
+ * /api/fahrtstrecke
+ */
 @Log
 @RestController
 @CrossOrigin(origins = "*", allowedHeaders = "*")
@@ -44,6 +48,13 @@ public class FahrtstreckeController {
         this.haltestellenzuordnungController = haltestellenzuordnungController;
     }
 
+    /**
+     * Erstellt neue Fahrtstrecke ohne Haltestellen anhand des übergebenen
+     * FahrtstreckeInputDTOs
+     * 
+     * @param fahrtstreckeInputDTO
+     * @return ResponseEntity mit ID der neuen Fahrtstrecke
+     */
     @PostMapping(path = "")
     public ResponseEntity<Long> postFahrtstrecke(@RequestBody FahrtstreckeInputDTO fahrtstreckeInputDTO) {
         try {
@@ -53,6 +64,12 @@ public class FahrtstreckeController {
         }
     }
 
+    /**
+     * Erstellt neue Fahrtstrecke mit übergebenen Haltestellen aus dem RequestBody
+     * 
+     * @param fahrtstreckeInputMitHaltestellenDTO
+     * @return ResponseEntity mit ID der neuen Fahrtstrecke
+     */
     @PostMapping(path = "/haltestellen")
     public ResponseEntity<Long> postFahrtstreckeMitHaltestellen(
             @RequestBody FahrtstreckeInputMitHaltestellenDTO fahrtstreckeInputMitHaltestellenDTO) {
@@ -68,20 +85,26 @@ public class FahrtstreckeController {
         }
     }
 
+    /**
+     * Erstellt HaltestellenzuordnungInputDTO Liste aus übergebenem
+     * FahrtstreckeInputMitHaltestellenDTO und FahrtstreckenID
+     * 
+     * @param fahrtstreckeInputMitHaltestellenDTO
+     * @param fahrtstreckeId
+     * @return Liste aus HaltestellenzuordnungInputDTOs
+     */
     private List<HaltestellenzuordnungInputDTO> genHaltestellenzuordnungInputDTOs(
             FahrtstreckeInputMitHaltestellenDTO fahrtstreckeInputMitHaltestellenDTO, Long fahrtstreckeId) {
         List<HaltestellenzuordnungInputDTO> zuordnungDtos = new ArrayList<>();
 
-        for (int i = 0; i < fahrtstreckeInputMitHaltestellenDTO.getHaltestellen().size(); i++) {
+        // durchläuft die angegebenen Haltestellen und baut daraus das
+        // HaltestellenzuordnungInputDTO
+        for (int i = 0; i < fahrtstreckeInputMitHaltestellenDTO.getHaltestellen().size() - 1; i++) {
             HaltestellenzuordnungOhneNaechsteHaltestelleInputDTO haltestelle = fahrtstreckeInputMitHaltestellenDTO
                     .getHaltestellen().get(i);
-            if (i + 1 - fahrtstreckeInputMitHaltestellenDTO.getHaltestellen().size() == 0) {
-                break;
-            }
             HaltestellenzuordnungInputDTO zuordnung = new HaltestellenzuordnungInputDTO();
             zuordnung.setFahrtstreckeId(fahrtstreckeId);
             zuordnung.setHaltestelleId(haltestelle.getHaltestelleId());
-
             zuordnung.setFahrtzeit(haltestelle.getFahrtzeit());
             zuordnung.setNaechsteHaltestelle(
                     fahrtstreckeInputMitHaltestellenDTO.getHaltestellen().get(i + 1).getHaltestelleId());
@@ -90,6 +113,13 @@ public class FahrtstreckeController {
         return zuordnungDtos;
     }
 
+    /**
+     * Generiert aus einem FahrtstreckeInputMitHaltestellenDTO ein
+     * FahrtstreckeInputDTO für den Fahrtstrecke Service
+     * 
+     * @param fahrtstreckeInputMitHaltestellenDTO
+     * @return FahrtstreckeInputDTO
+     */
     private FahrtstreckeInputDTO genNewFahrtstreckeInputDTO(
             FahrtstreckeInputMitHaltestellenDTO fahrtstreckeInputMitHaltestellenDTO) {
         FahrtstreckeInputDTO fahrtstreckeInputDTO = new FahrtstreckeInputDTO();
@@ -98,6 +128,12 @@ public class FahrtstreckeController {
         return fahrtstreckeInputDTO;
     }
 
+    /**
+     * Gibt alle Fahrten zu der übergebenen Buslinie zurück
+     * 
+     * @param buslinieId
+     * @return ResponseEntity mit Liste aus FahrtstreckeMitHaltestellenDTOs
+     */
     @GetMapping(path = "/buslinie/{buslinieId}")
     public ResponseEntity<List<FahrtstreckeMitHaltestellenDTO>> getAlleFahrtenZuBuslinie(
             @PathVariable Long buslinieId) {
@@ -110,6 +146,14 @@ public class FahrtstreckeController {
         return ResponseEntity.ok(alleFahrten);
     }
 
+    /**
+     * Gibt alle Fahrten zu einer Buslinie aus in der die Haltestelle enthalten ist
+     * mit Uhrzeit zu der sie laut Fahrplan abfahren
+     * 
+     * @param buslinieId
+     * @param haltestelleId
+     * @return ResponseEntity mit Liste aus FahrtstreckeMitUhrzeitDTOs
+     */
     @GetMapping(path = "/uhrzeit")
     public ResponseEntity<List<FahrtstreckeMitUhrzeitDTO>> getAlleFahrtenZuBuslinieUndHaltestelleMitUhrzeit(
             @RequestParam Long buslinieId, @RequestParam Long haltestelleId) {
@@ -127,6 +171,11 @@ public class FahrtstreckeController {
         return ResponseEntity.ok(fahrtstreckenMitUhrzeit);
     }
 
+    /**
+     * Gibt alle Fahrtstrecken aus
+     * 
+     * @return ResponseEntity mit Liste aus FahrtstreckeOutputDTOs
+     */
     @GetMapping(path = "")
     public ResponseEntity<List<FahrtstreckeOutputDTO>> getAlleFahrtstrecken() {
         List<FahrtstreckeOutputDTO> fahrtstrecken = service.getAlleFahrtstrecken();
@@ -136,6 +185,12 @@ public class FahrtstreckeController {
         return ResponseEntity.ok(fahrtstrecken);
     }
 
+    /**
+     * Löscht eine Fahrtstrecke anhand der ID
+     * 
+     * @param fahrtstreckeId
+     * @return ResponseEntity mit Boolean ob das Löschen erfolgreich war
+     */
     @DeleteMapping(path = "/{fahrtstreckeId}")
     public ResponseEntity<Boolean> deleteFahrtstreckeById(@PathVariable Long fahrtstreckeId) {
         try {

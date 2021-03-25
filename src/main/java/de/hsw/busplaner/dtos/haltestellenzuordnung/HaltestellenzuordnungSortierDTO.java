@@ -33,8 +33,10 @@ public class HaltestellenzuordnungSortierDTO extends HaltestellenzuordnungDTO
 
     @Override
     public int compareTo(HaltestellenzuordnungSortierDTO o) {
-        if (getUhrzeit() == null || o.getUhrzeit() == null)
-            return 0;
+        if (getUhrzeit() == null)
+            return -1;
+        if (o.getUhrzeit() == null)
+            return 1;
         return getUhrzeit().compareTo(o.getUhrzeit());
     }
 }

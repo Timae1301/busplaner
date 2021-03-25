@@ -22,6 +22,10 @@ import de.hsw.busplaner.util.FahrtzeitenErmitteln;
 import de.hsw.busplaner.util.HaltestellenSortierer;
 import lombok.extern.java.Log;
 
+/**
+ * Der Service des Fahrplans erbt von dem abstrakten BasicService für die CRUD
+ * Operationen
+ */
 @Log
 @Service
 public class FahrplanService extends BasicService<Fahrplan, Long> {
@@ -44,12 +48,23 @@ public class FahrplanService extends BasicService<Fahrplan, Long> {
         return repository;
     }
 
+    /**
+     * Speichert neuen Fahrplan anhand übergebenen Namens
+     * 
+     * @param name
+     * @return ID des neuen Fahrplans
+     */
     public Long postFahrplan(String name) {
         Fahrplan fahrplan = new Fahrplan(name);
         log.info(String.format("Neuen Fahrplan: %s angelegt", fahrplan));
         return save(fahrplan).getId();
     }
 
+    /**
+     * Gibt alle Fahrpläne als FahrplanOutputDTOs zurücl
+     * 
+     * @return Liste von FahrplanOutputDTOs
+     */
     public List<FahrplanOutputDTO> getAlleFahrplaene() {
         List<FahrplanOutputDTO> fahrplaene = new ArrayList<>();
         for (Fahrplan fahrplan : findAll()) {
@@ -59,15 +74,31 @@ public class FahrplanService extends BasicService<Fahrplan, Long> {
         return fahrplaene;
     }
 
-    public Fahrplan getFahrplanZuId(Long id) {
+    /**
+     * Findet einen Fahrplan anhand einer ID und gibt ihn zurück
+     * 
+     * @param id
+     * @return Fahrplan
+     * @throws IllegalArgumentException wenn zu der ID kein Fahrplan gefunden wurde
+     */
+    public Fahrplan getFahrplanZuId(Long id) throws IllegalArgumentException {
         Optional<Fahrplan> fahrplanOpt = findById(id);
         if (fahrplanOpt.isEmpty()) {
+            log.warning(String.format("Keine Fahrplan zu ID %s gefunden", id));
             throw new IllegalArgumentException(String.format("Keine Fahrplan zu ID %s gefunden", id));
         }
         return fahrplanOpt.get();
     }
 
-    public boolean deleteFahrplan(Long fahrplanId) {
+    /**
+     * Löscht einen Fahrplan zu der übergebenen ID und löscht auch alle bestehenden
+     * Fahrplanzuordnungen
+     * 
+     * @param fahrplanId
+     * @return boolean, ob das Löschen erfolgreich war
+     * @throws IllegalArgumentException wenn zu der ID kein Fahrplan gefunden wurde
+     */
+    public boolean deleteFahrplan(Long fahrplanId) throws IllegalArgumentException {
         Fahrplan fahrplan = getFahrplanZuId(fahrplanId);
         List<Fahrplanzuordnung> fahrplanzuordnungen = fahrplanzuordnungService
                 .getAlleFahrplanzuordnungenZuFahrplan(fahrplan);
@@ -78,8 +109,22 @@ public class FahrplanService extends BasicService<Fahrplan, Long> {
         return true;
     }
 
+    /**
+     * Liest zu einem Fahrplan alle Fahrten in einem ausgewählten Zeitraum aus und
+     * ermittelt deren Haltestellen und gibt die sortierten Fahrtstrecken in ein
+     * FahrplanauskunftDTO
+     * 
+     * @param fahrplanId
+     * @param zeitpunktVorher
+     * @param zeitpunktNachher
+     * @return FahrplanauskunftDTO mit sortierten Fahrtstrecken inklusive Uhrzeit
+     * @throws InstanceNotFoundException wenn beim Sortieren der Haltestellen die
+     *                                   Informationen zu der Haltestelle nicht
+     *                                   ermittelt werden konnten
+     * @throws IllegalArgumentException  wenn zu der ID kein Fahrplan gefunden wurde
+     */
     public FahrplanauskunftDTO getFahrplanauskunft(Long fahrplanId, LocalTime zeitpunktVorher,
-            LocalTime zeitpunktNachher) throws InstanceNotFoundException {
+            LocalTime zeitpunktNachher) throws InstanceNotFoundException, IllegalArgumentException {
         Fahrplan fahrplan = getFahrplanZuId(fahrplanId);
         List<FahrtstreckeMitHaltestellenDTO> fahrtstrecken = new ArrayList<>();
         List<Fahrplanzuordnung> fahrplanzuordnungen = fahrplanzuordnungService
@@ -87,14 +132,27 @@ public class FahrplanService extends BasicService<Fahrplan, Long> {
         for (Fahrplanzuordnung fahrplanzuordnung : fahrplanzuordnungen) {
             fahrtstrecken.add(getFahrtstreckeMitHaltestellen(fahrplanzuordnung));
         }
+        // Die Liste wird anhand des Startzeitpunkts sortiert
         Collections.sort(fahrtstrecken);
         return new FahrplanauskunftDTO(fahrplan.getName(), fahrtstrecken);
     }
 
+    /**
+     * Bringt die Fahrten in die richtige Reihenfolge und ermittelt die Uhrzeiten
+     * 
+     * @param fahrplanzuordnung
+     * @return FahrtstreckeMitHaltestellenDTO
+     * @throws InstanceNotFoundException wenn beim Sortieren der Haltestellen die
+     *                                   Informationen zu der Haltestelle nicht
+     *                                   ermittelt werden konnten
+     */
     private FahrtstreckeMitHaltestellenDTO getFahrtstreckeMitHaltestellen(Fahrplanzuordnung fahrplanzuordnung)
             throws InstanceNotFoundException {
         List<HaltestellenzuordnungSortierDTO> sortiertehaltestellen = sortierer.sortiereHaltestellen(
                 new ArrayList<>(fahrplanzuordnung.getFahrtstrecke().getHaltestellenzuordnungen()));
+
+        // Die Fahrtzeit für die einzelnen Haltestellen muss je nach Fahrtrichtung
+        // ermittelt werden
         if (fahrplanzuordnung.isRichtung()) {
             sortiertehaltestellen = FahrtzeitenErmitteln.setzeUhrzeiten(sortiertehaltestellen,
                     fahrplanzuordnung.getStartzeitpunkt());
@@ -102,6 +160,8 @@ public class FahrplanService extends BasicService<Fahrplan, Long> {
             sortiertehaltestellen = FahrtzeitenErmitteln.setzeUhrzeitenInvertiert(sortiertehaltestellen,
                     fahrplanzuordnung.getStartzeitpunkt());
         }
+        // Die Liste wird anhand der Uhrzeiten sortiert um alle Haltestellenabfolgen in
+        // der richtigen Reihenfolge zu haben
         Collections.sort(sortiertehaltestellen);
         return new FahrtstreckeMitHaltestellenDTO(fahrplanzuordnung.getFahrtstrecke(), sortiertehaltestellen);
     }

@@ -29,6 +29,10 @@ import de.hsw.busplaner.services.BuslinieService;
 import de.hsw.busplaner.util.PatchUtil;
 import lombok.extern.java.Log;
 
+/**
+ * Der Controller der Buslinie stellt Endpunkte bereit unter dem Pfad
+ * /api/buslinie
+ */
 @RestController
 @Log
 @CrossOrigin(origins = "*", allowedHeaders = "*")
@@ -42,6 +46,12 @@ public class BuslinieController {
         this.service = service;
     }
 
+    /**
+     * Gibt alle Buslinien für eine HaltestellenId zurück
+     * 
+     * @param haltestelleId
+     * @return ResponseEntity mit Liste aus BuslinienOutputDTOs
+     */
     @GetMapping(path = "/haltestelle/{haltestelleId}")
     public ResponseEntity<List<BuslinieOutputDTO>> getAlleBuslinienFuerHaltestelle(@PathVariable Long haltestelleId) {
         List<BuslinieOutputDTO> buslinien = new ArrayList<>();
@@ -54,6 +64,11 @@ public class BuslinieController {
         return ResponseEntity.ok(buslinien);
     }
 
+    /**
+     * Gibt alle Buslinien zurück
+     * 
+     * @return ResponseEntity mit Liste aus BuslinienDTOs
+     */
     @GetMapping(path = "")
     public ResponseEntity<List<BuslinieOutputDTO>> getAllBuslinie() {
         List<BuslinieOutputDTO> buslinien = service.getAllBuslinien();
@@ -64,15 +79,28 @@ public class BuslinieController {
         return ResponseEntity.ok(buslinien);
     }
 
+    /**
+     * Erstellt neue Buslinie zu übergebener BusNr
+     * 
+     * @param busNr
+     * @return ResponseEntity mit ID der neuen Buslinie
+     */
     @PostMapping(path = "/{busNr}")
     public ResponseEntity<Long> postBuslinie(@PathVariable Long busNr) {
         return ResponseEntity.ok(service.postBuslinie(busNr));
     }
 
+    /**
+     * Bearbeitet Buslinie zu der übergebenen ID mit dem RequestBody
+     * 
+     * @param buslinieId
+     * @param jsonPatch
+     * @return ResponseEntity mit Boolean ob der Patch erfolgreich war
+     */
     @PatchMapping(path = "")
     public ResponseEntity<Boolean> patchBuslinie(@RequestParam Long buslinieId, @RequestBody JsonPatch jsonPatch) {
         try {
-            BuslinieOutputDTO buslinie = service.getBuslinie(buslinieId);
+            BuslinieOutputDTO buslinie = service.getBuslinieDtoById(buslinieId);
             buslinie = PatchUtil.applyPatch(jsonPatch, buslinie, BuslinieOutputDTO.class);
             service.patchBuslinie(buslinie);
             return ResponseEntity.ok(true);
@@ -83,6 +111,12 @@ public class BuslinieController {
         }
     }
 
+    /**
+     * Löscht Buslinie
+     * 
+     * @param buslinieId
+     * @return ResponseEntity mit Boolean ob die Löschung erfolgreich war
+     */
     @DeleteMapping(path = "/{buslinieId}")
     public ResponseEntity<Boolean> deleteBuslinie(@PathVariable Long buslinieId) {
         try {

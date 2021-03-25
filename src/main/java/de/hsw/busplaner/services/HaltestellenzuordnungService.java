@@ -18,6 +18,10 @@ import de.hsw.busplaner.repositories.HaltestellenzuordnungRepository;
 import de.hsw.busplaner.util.HaltestellenSortierer;
 import lombok.extern.java.Log;
 
+/**
+ * Der Service der Haltestellenzuordnung erbt von dem abstrakten BasicService
+ * für die CRUD Operationen
+ */
 @Log
 @Service
 public class HaltestellenzuordnungService extends BasicService<Haltestellenzuordnung, Long> {
