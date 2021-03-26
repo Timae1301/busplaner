@@ -13,7 +13,7 @@ import lombok.NoArgsConstructor;
 @EqualsAndHashCode(callSuper = false)
 @NoArgsConstructor
 public class FahrtstreckeOutputDTO extends FahrtstreckeDTO {
-    Long id;
+    Long fahrtstreckeId;
 
     List<Fahrplanzuordnung> fahrplanzuordnungen;
 
@@ -24,7 +24,7 @@ public class FahrtstreckeOutputDTO extends FahrtstreckeDTO {
     Long buslinieId;
 
     public FahrtstreckeOutputDTO(Fahrtstrecke fahrtstrecke) {
-        this.id = fahrtstrecke.getId();
+        this.fahrtstreckeId = fahrtstrecke.getId();
         this.fahrplanzuordnungen = fahrtstrecke.getFahrplanzuordnungen();
         this.haltestellenzuordnungen = fahrtstrecke.getHaltestellenzuordnungen();
         super.fahrtstreckeName = fahrtstrecke.getName();
