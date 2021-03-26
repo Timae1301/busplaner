@@ -47,7 +47,7 @@ public class Fahrtstrecke {
     List<Haltestellenzuordnung> haltestellenzuordnungen;
 
     public Fahrtstrecke(FahrtstreckeInputDTO fahrtstreckeInputDTO, Buslinie buslinie) {
-        this.name = fahrtstreckeInputDTO.getName();
+        this.name = fahrtstreckeInputDTO.getFahrtstreckeName();
         this.buslinie = buslinie;
     }
 }
