@@ -21,13 +21,13 @@ public class FahrtstreckeOutputDTO extends FahrtstreckeDTO {
 
     boolean loeschbar;
 
-    Long buslinie;
+    Long buslinieId;
 
     public FahrtstreckeOutputDTO(Fahrtstrecke fahrtstrecke) {
         this.id = fahrtstrecke.getId();
         this.fahrplanzuordnungen = fahrtstrecke.getFahrplanzuordnungen();
         this.haltestellenzuordnungen = fahrtstrecke.getHaltestellenzuordnungen();
         super.name = fahrtstrecke.getName();
-        this.buslinie = fahrtstrecke.getBuslinie().getBusnr();
+        this.buslinieId = fahrtstrecke.getBuslinie().getId();
     }
 }

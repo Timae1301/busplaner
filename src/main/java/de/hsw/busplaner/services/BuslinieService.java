@@ -135,7 +135,7 @@ public class BuslinieService extends BasicService<Buslinie, Long> {
         try {
             findByBusnr(buslinieDTO.getBusnr());
             throw new ResponseStatusException(HttpStatus.UNPROCESSABLE_ENTITY,
-                    String.format("Die BusNr %s ist bereits vergeben", buslinieDTO.getBusnr()));
+                    String.format("Die BusNr %s ist bereits vergeben", buslinieDTO.getId()));
         } catch (IllegalArgumentException e) {
             save(new Buslinie(buslinieDTO));
         }
@@ -186,7 +186,7 @@ public class BuslinieService extends BasicService<Buslinie, Long> {
         List<BuslinieOutputDTO> buslinien = new ArrayList<>();
         for (FahrtstreckeOutputDTO fahrtstreckeOutputDTO : fahrtstreckeService.getAlleFahrtstrecken()) {
             if (haltestelleService.isHaltestelleInFahrtstrecke(haltestelleId, fahrtstreckeOutputDTO.getId())) {
-                buslinien.add(new BuslinieOutputDTO(findByBusnr(fahrtstreckeOutputDTO.getBuslinie())));
+                buslinien.add(new BuslinieOutputDTO(getBuslinieById(fahrtstreckeOutputDTO.getBuslinieId())));
             }
         }
         return buslinien;
