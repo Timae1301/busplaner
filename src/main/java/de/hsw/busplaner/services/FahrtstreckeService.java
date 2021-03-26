@@ -201,19 +201,15 @@ public class FahrtstreckeService extends BasicService<Fahrtstrecke, Long> {
     }
 
     /**
-     * Sucht alle Fahrtstrecken zu einer übergebenen BuslinienID und sortiert dessen
-     * Haltestellen
+     * Sucht alle Fahrtstrecken mit Haltestellen und sortiert diese
      * 
      * @param buslinieId
      * @return Liste mit FahrtstreckeMitHaltestellenDTOs
      * @throws InstanceNotFoundException wenn beim Sortieren der Haltestellen die
      *                                   Informationen zu der Haltestelle nicht
      *                                   ermittelt werden konnten
-     * @throws IllegalArgumentException  wenn zu der ID keine Buslinie gefunden
-     *                                   wurde
      */
-    public List<FahrtstreckeMitHaltestellenDTO> getAlleFahrtstreckenMitHaltestellen()
-            throws InstanceNotFoundException, IllegalArgumentException {
+    public List<FahrtstreckeMitHaltestellenDTO> getAlleFahrtstreckenMitHaltestellen() throws InstanceNotFoundException {
         List<FahrtstreckeMitHaltestellenDTO> alleFahrtstrecken = new ArrayList<>();
         for (Fahrtstrecke fahrtstrecke : findAll()) {
             if (fahrtstrecke.getHaltestellenzuordnungen().isEmpty()) {
