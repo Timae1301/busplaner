@@ -5,11 +5,24 @@ import java.util.List;
 
 import de.hsw.busplaner.dtos.haltestellenzuordnung.HaltestellenzuordnungSortierDTO;
 
+/**
+ * Fahrtzeiten ermitteln Klasse, um für die Haltestellen in den Fahrten die
+ * einzelnen Fahrtzeiten zu berechnen oder die Uhrzeiten in einem Fahrplan
+ * auszurechnen
+ */
 public class FahrtzeitenErmitteln {
 
+    // privater leerer Konstruktor
     private FahrtzeitenErmitteln() {
     }
 
+    /**
+     * Berechnet die Fahrtzeit bis zu der übergebenen HaltestelleID in Minuten
+     * 
+     * @param haltestellen
+     * @param haltestelleId
+     * @return Fahrtzeit bis zu der Haltestelle in Minuten
+     */
     public static int ermittleFahrtzeitInMinuten(List<HaltestellenzuordnungSortierDTO> haltestellen,
             Long haltestelleId) {
         int fahrtzeit = 0;
@@ -22,6 +35,14 @@ public class FahrtzeitenErmitteln {
         return fahrtzeit;
     }
 
+    /**
+     * Berechnet die Fahrtzeit bis zu der übergebenen HaltestelleID in Minuten. In
+     * umgekehrter Richtung
+     * 
+     * @param haltestellen
+     * @param haltestelleId
+     * @return Fahrtzeit bis zu der Haltestelle in Minuten
+     */
     public static int ermittleFahrtzeitInMinutenInvertiert(List<HaltestellenzuordnungSortierDTO> haltestellen,
             Long haltestelleId) {
         int fahrtzeit = 0;
@@ -34,6 +55,14 @@ public class FahrtzeitenErmitteln {
         return fahrtzeit;
     }
 
+    /**
+     * Setzt für die Haltestellen die Uhrzeiten zu denen sie laut der Startzeit
+     * ankommen
+     * 
+     * @param haltestellen
+     * @param startzeit
+     * @return Liste mit HaltestellenzuordnungSortierDTOs inklusive Uhrzeiten
+     */
     public static List<HaltestellenzuordnungSortierDTO> setzeUhrzeiten(
             List<HaltestellenzuordnungSortierDTO> haltestellen, LocalTime startzeit) {
         if (haltestellen.isEmpty()) {
@@ -47,6 +76,14 @@ public class FahrtzeitenErmitteln {
         return haltestellen;
     }
 
+    /**
+     * Setzt für die Haltestellen die Uhrzeiten zu denen sie laut der Startzeit
+     * ankommen. In umgekehrter Richtung
+     * 
+     * @param haltestellen
+     * @param startzeit
+     * @return Liste mit HaltestellenzuordnungSortierDTOs inklusive Uhrzeiten
+     */
     public static List<HaltestellenzuordnungSortierDTO> setzeUhrzeitenInvertiert(
             List<HaltestellenzuordnungSortierDTO> haltestellen, LocalTime startzeit) {
         if (haltestellen.isEmpty()) {

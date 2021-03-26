@@ -14,4 +14,10 @@ public class FahrtstreckeMitUhrzeitDTO {
     String fahrtName;
 
     LocalTime uhrzeit;
+
+    public FahrtstreckeMitUhrzeitDTO(FahrtstreckeMitHaltestellenDTO fahrtstreckeMitHaltestellenDTO, LocalTime uhrzeit) {
+        this.fahrtId = fahrtstreckeMitHaltestellenDTO.getFahrtstreckeId();
+        this.fahrtName = fahrtstreckeMitHaltestellenDTO.getFahrtstreckeName();
+        this.uhrzeit = uhrzeit;
+    }
 }

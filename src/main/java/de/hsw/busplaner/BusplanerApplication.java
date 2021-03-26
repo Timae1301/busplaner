@@ -22,6 +22,15 @@ public class BusplanerApplication {
 		SpringApplication.run(BusplanerApplication.class, args);
 	}
 
+	/**
+	 * Setzen der Date Formate für das konvertieren aus dem JSON für alle
+	 * Zeitobjekte (inklusive Java 8 Date-Objekten)
+	 * https://www.baeldung.com/spring-boot-formatting-json-dates "So, if we want to
+	 * use Java 8 date types and set a default date format, then we need to look at
+	 * creating a Jackson2ObjectMapperBuilderCustomizer bean"
+	 * 
+	 * @return
+	 */
 	@Bean
 	public Jackson2ObjectMapperBuilderCustomizer jsonCustomizer() {
 		return builder -> {

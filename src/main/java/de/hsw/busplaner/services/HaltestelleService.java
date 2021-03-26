@@ -48,6 +48,12 @@ public class HaltestelleService extends BasicService<Haltestelle, Long> {
         return repository;
     }
 
+    /**
+     * Findet alle Haltestellen und fügt an das HaltestelleOutputDTO an, ob sie
+     * löschbar sind
+     * 
+     * @return Liste mit HaltestelleOutputDTOs
+     */
     public List<HaltestelleOutputDTO> getAllHaltestellen() {
         List<HaltestelleOutputDTO> haltestellen = new ArrayList<>();
         for (Haltestelle haltestelle : findAll()) {
@@ -61,18 +67,35 @@ public class HaltestelleService extends BasicService<Haltestelle, Long> {
         return haltestellen;
     }
 
+    /**
+     * Erstellt und speichert eine Haltestelle anhand des Namens
+     * 
+     * @param haltestelleName
+     * @return ID der neuen Haltestelle
+     */
     public Long postHaltestelle(String haltestelleName) {
         Haltestelle haltestelle = new Haltestelle(haltestelleName);
         log.info(String.format("Neue Haltestelle: %s angelegt", haltestelleName));
         return save(haltestelle).getId();
     }
 
+    /**
+     * Bearbeitet die Haltestelle anhand des HaltestelleOutputDTOs
+     * 
+     * @param haltestelleOutputDTO
+     */
     public void patchHaltestelle(HaltestelleOutputDTO haltestelleOutputDTO) {
         Haltestelle haltestelle = new Haltestelle(haltestelleOutputDTO);
         save(haltestelle);
     }
 
-    public boolean deleteHaltestelle(Long haltestelleId) throws IllegalArgumentException {
+    /**
+     * Löscht eine Haltestelle anhand der übergebenen HaltestelleID
+     * 
+     * @param haltestelleId
+     * @return boolean, ob die Löschung erfolgreich war
+     */
+    public boolean deleteHaltestelle(Long haltestelleId) {
         if (isHaltestelleLoeschbar(haltestelleId)) {
             deleteById(haltestelleId);
             return true;
@@ -80,6 +103,14 @@ public class HaltestelleService extends BasicService<Haltestelle, Long> {
         return false;
     }
 
+    /**
+     * Prüft, ob eine Haltestelle löschbar ist Eine Haltestelle ist löschbar, wenn
+     * sie in keiner Fahrtstrecke enthalten ist, also keine Haltestellenzuordnungen
+     * zu ihrer ID existieren
+     * 
+     * @param haltestelleId
+     * @return boolean, ob die Haltestelle löschbar ist
+     */
     private boolean isHaltestelleLoeschbar(Long haltestelleId) {
         Haltestelle haltestelle = getHaltestelleById(haltestelleId);
         if (haltestelle.getHaltestellenzuordnungen().isEmpty()) {
@@ -93,10 +124,24 @@ public class HaltestelleService extends BasicService<Haltestelle, Long> {
         return false;
     }
 
+    /**
+     * Ermittelt alle Fahrten zu übergebner FahrtstreckeID und überprüft, ob die
+     * Haltestelle enthalten ist
+     * 
+     * @param haltestelleId
+     * @param fahrtstreckeId
+     * @return boolean, ob die Haltestelle in der Fahrtstrecke enthalten ist
+     * @throws InstanceNotFoundException wenn beim Sortieren der Haltestellen die
+     *                                   Informationen zu der Haltestelle nicht
+     *                                   ermittelt werden konnten
+     */
     public boolean isHaltestelleInFahrtstrecke(Long haltestelleId, Long fahrtstreckeId)
             throws InstanceNotFoundException {
         List<Haltestellenzuordnung> zuordnungen = haltestellenzuordnungService
                 .getAlleZuordnungenZuFahrtstrecke(fahrtstreckeId);
+        // Haltestellen müssen sortiert werden, um auch die letzte Haltestelle einer
+        // Fahrt
+        // überprüfen zu können
         for (HaltestellenzuordnungSortierDTO haltestellenzuordnung : sortierer
                 .sortiereHaltestellen(new ArrayList<>(zuordnungen))) {
             if (haltestellenzuordnung.getHaltestelleId().equals(haltestelleId)) {
@@ -107,7 +152,7 @@ public class HaltestelleService extends BasicService<Haltestelle, Long> {
     }
 
     /**
-     * Findet einen Haltestelle anhand einer ID und gibt ihn zurück
+     * Findet einen Haltestelle anhand einer ID und gibt sie zurück
      * 
      * @param id
      * @return Haltestelle
@@ -135,6 +180,20 @@ public class HaltestelleService extends BasicService<Haltestelle, Long> {
         return new HaltestelleOutputDTO(getHaltestelleById(haltestelleId));
     }
 
+    /**
+     * Ermittelt alle Fahrten zu einer übergebenen BuslinieID und fügt die
+     * Haltestellen als HaltestelleOutputDTO in ein HashSet, um Dopplungen zu
+     * vermeiden
+     * 
+     * @param buslinieId
+     * @return Liste mit HaltestelleOutputDTOs
+     * @throws InstanceNotFoundException wenn beim Sortieren der Haltestellen die
+     *                                   Informationen zu der Haltestelle nicht
+     *                                   ermittelt werden konnten
+     * @throws IllegalArgumentException  wenn zu der ID keine Buslinie gefunden
+     *                                   wurde oder wenn zu der ID keine Haltestelle
+     *                                   gefunden wurde
+     */
     public List<HaltestelleOutputDTO> getAlleHaltestellenZuBuslinieId(Long buslinieId)
             throws InstanceNotFoundException, IllegalArgumentException {
         HashSet<HaltestelleOutputDTO> haltestellenSet = new HashSet<>();

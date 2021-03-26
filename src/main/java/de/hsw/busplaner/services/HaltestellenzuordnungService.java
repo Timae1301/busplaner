@@ -47,6 +47,13 @@ public class HaltestellenzuordnungService extends BasicService<Haltestellenzuord
         return repository;
     }
 
+    /**
+     * Erstellt und speichert eine neue Haltestellenzuordnung anhand des
+     * HaltestellenzuordnungInputDTOs
+     * 
+     * @param haltestellenzuordnungInputDTO
+     * @return ID der neuen Haltestellenzuordnung
+     */
     public Long postHaltestellenzuordnug(HaltestellenzuordnungInputDTO haltestellenzuordnungInputDTO) {
         Fahrtstrecke fahrtstrecke = fahrtstreckeService
                 .getFahrtstreckeZuId(haltestellenzuordnungInputDTO.getFahrtstreckeId());
@@ -60,6 +67,12 @@ public class HaltestellenzuordnungService extends BasicService<Haltestellenzuord
         return haltestellenzuordnung.getId();
     }
 
+    /**
+     * Findet alle vorhanden Haltestellenzuordnungen und erstellt damit eine Liste
+     * mit HaltestellenzuordnungOutputDTOs
+     * 
+     * @return Liste mit HaltestellenzuordnungOutputDTOs
+     */
     public List<HaltestellenzuordnungOutputDTO> getAlleZuordnungen() {
         List<HaltestellenzuordnungOutputDTO> zuordnungen = new ArrayList<>();
         for (Haltestellenzuordnung zuordnung : findAll()) {
@@ -71,6 +84,15 @@ public class HaltestellenzuordnungService extends BasicService<Haltestellenzuord
         return zuordnungen;
     }
 
+    /**
+     * Findet alle Haltestellenzuordnungen zu einer übergebenen FahrtstreckeID und
+     * gibt die Haltestellen soritert aus
+     * 
+     * @param fahrtstreckeId
+     * @return Liste mit HaltestellenzuordnungSortierDTOs
+     * @throws InstanceNotFoundException wenn zu der ID keine Fahrtstrecke gefunden
+     *                                   wurde
+     */
     public List<HaltestellenzuordnungSortierDTO> getAlleZuordnungenSorted(Long fahrtstreckeId)
             throws InstanceNotFoundException {
         ArrayList<Haltestellenzuordnung> zuordnungen = new ArrayList<>();
@@ -79,16 +101,12 @@ public class HaltestellenzuordnungService extends BasicService<Haltestellenzuord
         return sortierer.sortiereHaltestellen(zuordnungen);
     }
 
-    public List<HaltestellenzuordnungOutputDTO> getAlleZuordnungenDTOsZuFahrtstrecke(Long fahrtstreckeId) {
-        Fahrtstrecke fahrtstrecke = fahrtstreckeService.getFahrtstreckeZuId(fahrtstreckeId);
-        List<HaltestellenzuordnungOutputDTO> zuordnungen = new ArrayList<>();
-        for (Haltestellenzuordnung zuordnung : repository.findAllByFahrtstrecke(fahrtstrecke)) {
-            Haltestelle neachsteHaltestelle = haltestelleService.getHaltestelleById(zuordnung.getNaechsteHaltestelle());
-            zuordnungen.add(new HaltestellenzuordnungOutputDTO(zuordnung, neachsteHaltestelle));
-        }
-        return zuordnungen;
-    }
-
+    /**
+     * Findet alle Haltestellenzuordnungen zu übergebener FahrtstreckeID
+     * 
+     * @param fahrtstreckeId
+     * @return Liste mit Haltestellenzuordnungen
+     */
     public List<Haltestellenzuordnung> getAlleZuordnungenZuFahrtstrecke(Long fahrtstreckeId) {
         Fahrtstrecke fahrtstrecke = fahrtstreckeService.getFahrtstreckeZuId(fahrtstreckeId);
         List<Haltestellenzuordnung> zuordnungen = new ArrayList<>();
