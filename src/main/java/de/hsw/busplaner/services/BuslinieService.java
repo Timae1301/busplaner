@@ -185,8 +185,7 @@ public class BuslinieService extends BasicService<Buslinie, Long> {
             throws InstanceNotFoundException {
         List<BuslinieOutputDTO> buslinien = new ArrayList<>();
         for (FahrtstreckeOutputDTO fahrtstreckeOutputDTO : fahrtstreckeService.getAlleFahrtstrecken()) {
-            if (haltestelleService.isHaltestelleInFahrtstrecke(haltestelleId,
-                    fahrtstreckeOutputDTO.getFahrtstreckeId())) {
+            if (haltestelleService.isHaltestelleInFahrtstrecke(haltestelleId, fahrtstreckeOutputDTO.getId())) {
                 buslinien.add(new BuslinieOutputDTO(getBuslinieById(fahrtstreckeOutputDTO.getBuslinieId())));
             }
         }

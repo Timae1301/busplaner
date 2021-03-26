@@ -124,7 +124,7 @@ public class FahrtstreckeController {
             FahrtstreckeInputMitHaltestellenDTO fahrtstreckeInputMitHaltestellenDTO) {
         FahrtstreckeInputDTO fahrtstreckeInputDTO = new FahrtstreckeInputDTO();
         fahrtstreckeInputDTO.setBuslinieId(fahrtstreckeInputMitHaltestellenDTO.getBuslinieId());
-        fahrtstreckeInputDTO.setFahrtstreckeName(fahrtstreckeInputMitHaltestellenDTO.getFahrtstreckeName());
+        fahrtstreckeInputDTO.setName(fahrtstreckeInputMitHaltestellenDTO.getName());
         return fahrtstreckeInputDTO;
     }
 

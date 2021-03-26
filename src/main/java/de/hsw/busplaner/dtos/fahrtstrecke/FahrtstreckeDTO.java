@@ -7,5 +7,5 @@ import lombok.NoArgsConstructor;
 @Data
 public abstract class FahrtstreckeDTO {
 
-    String fahrtstreckeName;
+    String name;
 }
