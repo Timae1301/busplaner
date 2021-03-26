@@ -147,6 +147,22 @@ public class FahrtstreckeController {
     }
 
     /**
+     * Gibt alle Fahrten mit Haltestllen zurück
+     * 
+     * @return ResponseEntity mit Liste aus FahrtstreckeMitHaltestellenDTOs
+     */
+    @GetMapping(path = "/haltestelle")
+    public ResponseEntity<List<FahrtstreckeMitHaltestellenDTO>> getAlleFahrtenMitHaltestellen() {
+        List<FahrtstreckeMitHaltestellenDTO> alleFahrten = new ArrayList<>();
+        try {
+            alleFahrten.addAll(service.getAlleFahrtstreckenMitHaltestellen());
+        } catch (InstanceNotFoundException e) {
+            log.warning("Fehler beim Sortieren der Haltestellen");
+        }
+        return ResponseEntity.ok(alleFahrten);
+    }
+
+    /**
      * Gibt alle Fahrten zu einer Buslinie aus in der die Haltestelle enthalten ist
      * mit Uhrzeit zu der sie laut Fahrplan abfahren
      * 
