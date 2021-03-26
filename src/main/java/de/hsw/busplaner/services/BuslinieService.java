@@ -7,7 +7,9 @@ import java.util.Optional;
 import javax.management.InstanceNotFoundException;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
+import org.springframework.web.server.ResponseStatusException;
 
 import de.hsw.busplaner.beans.Buslinie;
 import de.hsw.busplaner.beans.Fahrtstrecke;
@@ -47,8 +49,10 @@ public class BuslinieService extends BasicService<Buslinie, Long> {
      * 
      * @param busnr
      * @return Buslinie
+     * @throws IllegalArgumentException wenn zu der BusNr kein Eintrag gefunden
+     *                                  wurde
      */
-    public Buslinie findByBusnr(Long busnr) {
+    public Buslinie findByBusnr(Long busnr) throws IllegalArgumentException {
         Optional<Buslinie> buslinieOpt = repository.findByBusnr(busnr);
         if (buslinieOpt.isPresent()) {
             return buslinieOpt.get();
@@ -81,10 +85,17 @@ public class BuslinieService extends BasicService<Buslinie, Long> {
      * 
      * @param busNr
      * @return ID der neuen Buslinie
+     * @throws ResponseStatusException Wenn die BusNr schon vergeben ist
      */
-    public Long postBuslinie(Long busNr) {
-        log.info(String.format("Neue Buslinie: %s angelegt", busNr));
-        return save(new Buslinie(busNr)).getId();
+    public Long postBuslinie(Long busNr) throws ResponseStatusException {
+        try {
+            findByBusnr(busNr);
+            throw new ResponseStatusException(HttpStatus.UNPROCESSABLE_ENTITY,
+                    String.format("Die BusNr %s ist bereits vergeben", busNr));
+        } catch (IllegalArgumentException e) {
+            log.info(String.format("Neue Buslinie: %s angelegt", busNr));
+            return save(new Buslinie(busNr)).getId();
+        }
     }
 
     /**
@@ -118,9 +129,17 @@ public class BuslinieService extends BasicService<Buslinie, Long> {
      * Speichert eine berarbeitete Buslinie ab
      * 
      * @param buslinieDTO
+     * @throws ResponseStatusException wenn die Buslinie bereits vergeben ist
      */
-    public void patchBuslinie(BuslinieOutputDTO buslinieDTO) {
-        save(new Buslinie(buslinieDTO));
+    public void patchBuslinie(BuslinieOutputDTO buslinieDTO) throws ResponseStatusException {
+        try {
+            findByBusnr(buslinieDTO.getBusnr());
+            throw new ResponseStatusException(HttpStatus.UNPROCESSABLE_ENTITY,
+                    String.format("Die BusNr %s ist bereits vergeben", buslinieDTO.getBusnr()));
+        } catch (IllegalArgumentException e) {
+            save(new Buslinie(buslinieDTO));
+        }
+
     }
 
     /**

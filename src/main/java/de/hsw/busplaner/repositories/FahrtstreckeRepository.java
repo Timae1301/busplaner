@@ -1,5 +1,7 @@
 package de.hsw.busplaner.repositories;
 
+import java.util.Optional;
+
 import org.springframework.data.repository.CrudRepository;
 import org.springframework.stereotype.Repository;
 
@@ -19,4 +21,13 @@ public interface FahrtstreckeRepository extends CrudRepository<Fahrtstrecke, Lon
      * @return Iterable mit Fahrtstrecken
      */
     Iterable<Fahrtstrecke> findAllByBuslinie(Buslinie buslinie);
+
+    /**
+     * Gibt ein Optional einer Fahrtstrecke zurück anhand eines übergebenen
+     * Fahrtstreckennames
+     * 
+     * @param fahrtstreckeName
+     * @return Optional einer Fahrtstrecke
+     */
+    Optional<Fahrtstrecke> findByName(String fahrtstreckeName);
 }

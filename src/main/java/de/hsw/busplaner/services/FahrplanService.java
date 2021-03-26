@@ -9,7 +9,9 @@ import java.util.Optional;
 import javax.management.InstanceNotFoundException;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
+import org.springframework.web.server.ResponseStatusException;
 
 import de.hsw.busplaner.beans.Fahrplan;
 import de.hsw.busplaner.beans.Fahrplanzuordnung;
@@ -53,11 +55,36 @@ public class FahrplanService extends BasicService<Fahrplan, Long> {
      * 
      * @param name
      * @return ID des neuen Fahrplans
+     * @throws ResponseStatusException wenn der Fahrplanname bereits vorhanden ist
      */
-    public Long postFahrplan(String name) {
+    public Long postFahrplan(String name) throws ResponseStatusException {
         Fahrplan fahrplan = new Fahrplan(name);
-        log.info(String.format("Neuen Fahrplan: %s angelegt", fahrplan));
-        return save(fahrplan).getId();
+        try {
+            findByName(fahrplan.getName());
+            throw new ResponseStatusException(HttpStatus.UNPROCESSABLE_ENTITY,
+                    String.format("Der FahrplanName %s ist bereits vergeben", fahrplan.getName()));
+        } catch (IllegalArgumentException e) {
+            log.info(String.format("Neuen Fahrplan: %s angelegt", fahrplan));
+            return save(fahrplan).getId();
+        }
+    }
+
+    /**
+     * Gibt eine Fahrplan zu einem Fahrplannamen zurück
+     * 
+     * @param haltestellenName
+     * @return Fahrplan
+     * @throws IllegalArgumentException wenn zu dem Fahrplannamen bereits ein
+     *                                  Eintrag vorhanden ist
+     */
+    public Fahrplan findByName(String fahrplanName) throws IllegalArgumentException {
+        Optional<Fahrplan> fahrplanOpt = repository.findByName(fahrplanName);
+        if (fahrplanOpt.isPresent()) {
+            return fahrplanOpt.get();
+        }
+        log.warning("Kein Eintrag für Fahrplannamen: " + fahrplanName);
+        throw new IllegalArgumentException(
+                String.format("Zu dem Fahrplannamen %s wurde kein Eintrag gefunden", fahrplanName));
     }
 
     /**

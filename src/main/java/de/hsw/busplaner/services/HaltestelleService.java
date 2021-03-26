@@ -8,7 +8,9 @@ import java.util.Optional;
 import javax.management.InstanceNotFoundException;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
+import org.springframework.web.server.ResponseStatusException;
 
 import de.hsw.busplaner.beans.Haltestelle;
 import de.hsw.busplaner.beans.Haltestellenzuordnung;
@@ -72,21 +74,55 @@ public class HaltestelleService extends BasicService<Haltestelle, Long> {
      * 
      * @param haltestelleName
      * @return ID der neuen Haltestelle
+     * @throws ResponseStatusException wenn der Haltestellenname schon vergeben ist
      */
-    public Long postHaltestelle(String haltestelleName) {
+    public Long postHaltestelle(String haltestelleName) throws ResponseStatusException {
         Haltestelle haltestelle = new Haltestelle(haltestelleName);
-        log.info(String.format("Neue Haltestelle: %s angelegt", haltestelleName));
-        return save(haltestelle).getId();
+        try {
+            findByName(haltestelle.getName());
+            throw new ResponseStatusException(HttpStatus.UNPROCESSABLE_ENTITY,
+                    String.format("Der HaltestelleName %s ist bereits vergeben", haltestelle.getName()));
+        } catch (IllegalArgumentException e) {
+            log.info(String.format("Neue Haltestelle: %s angelegt", haltestelleName));
+            return save(haltestelle).getId();
+        }
+    }
+
+    /**
+     * Gibt eine Haltestelle zu einem Haltestellennamen zurück
+     * 
+     * @param haltestellenName
+     * @return Haltestelle
+     * @throws IllegalArgumentException wenn zu dem Haltestellennamen bereits ein
+     *                                  Eintrag vorhanden ist
+     */
+    public Haltestelle findByName(String haltestellenName) throws IllegalArgumentException {
+        Optional<Haltestelle> haltestelleOpt = repository.findByName(haltestellenName);
+        if (haltestelleOpt.isPresent()) {
+            return haltestelleOpt.get();
+        }
+        log.warning("Kein Eintrag für Haltestellennamen: " + haltestellenName);
+        throw new IllegalArgumentException(
+                String.format("Zu dem Haltestellennamen %s wurde kein Eintrag gefunden", haltestellenName));
     }
 
     /**
      * Bearbeitet die Haltestelle anhand des HaltestelleOutputDTOs
      * 
      * @param haltestelleOutputDTO
+     * @throws IllegalArgumentException wenn zu dem Haltestellennamen bereits ein
+     *                                  Eintrag vorhanden ist
      */
-    public void patchHaltestelle(HaltestelleOutputDTO haltestelleOutputDTO) {
+    public void patchHaltestelle(HaltestelleOutputDTO haltestelleOutputDTO) throws ResponseStatusException {
         Haltestelle haltestelle = new Haltestelle(haltestelleOutputDTO);
-        save(haltestelle);
+        try {
+            findByName(haltestelle.getName());
+            throw new ResponseStatusException(HttpStatus.UNPROCESSABLE_ENTITY,
+                    String.format("Der HaltestelleName %s ist bereits vergeben", haltestelle.getName()));
+        } catch (IllegalArgumentException e) {
+            log.info(String.format("Neue Haltestelle: %s angelegt", haltestelle.getName()));
+            save(haltestelle);
+        }
     }
 
     /**

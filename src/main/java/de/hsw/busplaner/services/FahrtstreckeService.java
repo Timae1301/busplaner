@@ -8,7 +8,9 @@ import java.util.Optional;
 import javax.management.InstanceNotFoundException;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
+import org.springframework.web.server.ResponseStatusException;
 
 import de.hsw.busplaner.beans.Buslinie;
 import de.hsw.busplaner.beans.Fahrplanzuordnung;
@@ -67,17 +69,27 @@ public class FahrtstreckeService extends BasicService<Fahrtstrecke, Long> {
     }
 
     /**
-     * Erstellt udn speichert neue Fahrtstrecke anhand eines FahrtstreckeInputDTO
+     * Erstellt und speichert neue Fahrtstrecke anhand eines FahrtstreckeInputDTO
      * 
      * @param fahrtstreckeInputDTO
      * @return ID der neuen Fahrtstrecke
      * @throws IllegalArgumentException wenn zu der ID keine Buslinie gefunden wurde
+     * @throws ResponseStatusException  wenn der Fahrtstreckenname bereits vergeben
+     *                                  wurde
      */
-    public Long postFahrtstrecke(FahrtstreckeInputDTO fahrtstreckeInputDTO) throws IllegalArgumentException {
+    public Long postFahrtstrecke(FahrtstreckeInputDTO fahrtstreckeInputDTO)
+            throws IllegalArgumentException, ResponseStatusException {
         Fahrtstrecke fahrtstrecke = new Fahrtstrecke(fahrtstreckeInputDTO,
                 buslinieService.getBuslinieById(fahrtstreckeInputDTO.getBuslinieId()));
-        save(fahrtstrecke);
-        return fahrtstrecke.getId();
+        try {
+            findByName(fahrtstrecke.getName());
+            throw new ResponseStatusException(HttpStatus.UNPROCESSABLE_ENTITY,
+                    String.format("Der Fahrtstreckenname %s ist bereits vergeben", fahrtstrecke.getName()));
+        } catch (IllegalArgumentException e) {
+            save(fahrtstrecke);
+            return fahrtstrecke.getId();
+        }
+
     }
 
     /**
@@ -96,6 +108,24 @@ public class FahrtstreckeService extends BasicService<Fahrtstrecke, Long> {
             fahrtstrecken.add(fahrtstreckeDto);
         }
         return fahrtstrecken;
+    }
+
+    /**
+     * Gibt eine Fahrtstrecke zu einem Fahrtstreckennamen zurück
+     * 
+     * @param fahrtstreckeName
+     * @return Fahrtstrecke
+     * @throws IllegalArgumentException wenn zu dem Fahrtstreckennamen bereits ein
+     *                                  Eintrag vorhanden ist
+     */
+    public Fahrtstrecke findByName(String fahrtstreckeName) throws IllegalArgumentException {
+        Optional<Fahrtstrecke> fahrtstreckeOpt = repository.findByName(fahrtstreckeName);
+        if (fahrtstreckeOpt.isPresent()) {
+            return fahrtstreckeOpt.get();
+        }
+        log.warning("Kein Eintrag für Fahrtstreckennamen: " + fahrtstreckeName);
+        throw new IllegalArgumentException(
+                String.format("Zu dem Fahrtstreckennamen %s wurde kein Eintrag gefunden", fahrtstreckeName));
     }
 
     /**
